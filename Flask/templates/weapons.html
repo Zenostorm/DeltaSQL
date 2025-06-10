@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Weapons</h2>
+<h4>
+    Weapons used to inflict damage on NPCs and other Wastelanders.
+    Every gun loads a specfic caliber, fed through compatible magazines, though some guns feature internal magazines.
+    All the weapons serve a unique purpose. Some are cheap and accessible, while others are built for combat.
+    Some effective in close quarters combat, some specialized in shooting at range,
+    while the most reliable weapons are versatile and proficient at all ranges.
+</h4>
+{% for weapon in params %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

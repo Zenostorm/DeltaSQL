@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PD Database - {{ title }}</title>
+    <link rel="stylesheet" href="\static\css\style.css">
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="page">
+        <header>{% include 'header.html' %}</header>
+
+        <nav>
+            <ul>
+                <li><a href="http://127.0.0.1:5000/">Home</a></li>
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        Gear
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <li><a href="http://127.0.0.1:5000/weapons">Weapons</a></li>
+                        <li><a href="http://127.0.0.1:5000/ammunition">Ammunition</a></li>
+                        <li><a href="http://127.0.0.1:5000/armor">Armor</a></li>
+                    </div>
+                </div>
+              </ul>
+        </nav>
+
+        <main>{% block content %}{% endblock %}</main>
+        <footer>&copy;2025</footer>
+    </body>
+    </div>
+</html>

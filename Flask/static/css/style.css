@@ -1,0 +1,267 @@
+/**GLOBAL STYLES**/
+body {
+    background-image: url("../images/background.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
+    background-size: 100% 100%;
+    margin: 0;
+    font-family: "Raleway";
+}
+
+.header {
+    display: flex;
+    margin: 0px;
+    background-color: #200E30;
+    font-family: 'Bungee';
+}
+
+.page {
+    background-color: #efefef;
+    margin-top: 2vw;
+    margin-left: 10vw;
+    margin-right: 10vw;
+    margin-bottom: 2vw;
+    padding-bottom: 2vw;
+    opacity: 0.95;
+}
+
+nav {
+    color: white;
+    background-color: #32164b;
+    padding-left: 1.5vw;
+    padding-top: 0.5vw;
+    padding-bottom: 0.5vw;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.5vw;
+  overflow: hidden;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  font-size: 1.5vw;
+  text-align: center;
+  padding-right: 4vw;
+  text-decoration: none;
+  transition-duration: 0.3s;
+}
+
+li a:hover {
+  color: #6865CF;
+}
+
+/* The dropdown container */
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+/* Dropdown button */
+.dropdown .dropbtn {
+    display: block;
+    color: white;
+    font-size: 1.5vw;
+    padding-right: 4vw;
+    text-align: center;
+    text-decoration: none;
+    transition-duration: 0.3s;
+    border: none;
+    outline: none;
+    background: none;
+    font-family: inherit;
+}
+
+/* Change colour to navbar links on hover */
+.navbar a:hover, .dropdown:hover .dropbtn {
+  color: #6865CF;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: whitesmoke;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 1vw;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 1vw;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: flex;
+  flex-direction: column;
+}
+
+footer {
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    height:30px;
+    width:100%;
+ }
+
+.button {
+    color: white;
+    background-color: black;
+    border: none;
+    font-size: 1.5vw;
+    margin: 2.5vw 0 1vw 4vw;
+    padding: 1vw 2vw 1vw 2vw;
+    border-radius: 1vw;
+    font-family: 'Bungee';
+    transition-duration: 0.3s;
+}
+
+.button:hover {
+    font-size: 1.6vw;
+    background-color: #353535;
+}
+
+/**IMAGE STYLES**/
+.icon {
+    display: block;
+    width: 9vw;
+    height: 9vw;
+    padding: 1.5vw;
+    background-color: #343746;
+    border-radius: 2vw;
+    transition-duration: 0.3s;
+}
+
+.icon:hover {
+    width: 10vw;
+    height: 10vw;
+    padding: 1vw;
+    background-color: #212228;
+}
+
+.logo {
+    width: 6vw;
+    margin: 1vw 0vw 1vw 2vw;
+}
+
+/**TEXT STYLES**/
+h1 {
+    color: white;
+    font-size: 2.5vw;
+    text-align: left;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.purple {
+    color: #6865CF;
+}
+
+.lighter {
+    font-weight: lighter;
+}
+
+/**text for list names**/
+h2 {
+    color: black;
+    font-size: 3vw;
+    margin-top: 2.5vw;
+    margin-bottom: 1vw;
+    margin-left: 4vw;
+    font-family: 'Bungee';
+}
+
+a {
+    color: black;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/**text for item icons and topic names**/
+h3 {
+    color: black;
+    font-size: 2.5vw;
+    margin-top: 1vw;
+    margin-left: 2vw;
+    font-family: 'Bungee';
+}
+
+/**text for descriptions**/
+h4 {
+    color: black;
+    font-size: 1.5vw;
+    margin: 0 4vw 4vw 4vw;
+}
+
+h5 {
+    color: black;
+    font-size: 1.5vw;
+    margin-top: auto;
+    margin: -2vw 5vw 0 2vw;
+}
+
+/**STATS TEXT**/
+h6 {
+    color: black;
+    font-size: 1.5vw;
+    text-align: left;
+    margin: 0 0 0.5vw 2vw;
+}
+
+/**ROWS AND COLUMNS**/
+.row {
+    display: flex;
+    margin: 0vw 4vw 2vw 4vw;
+    flex: 1 1 auto;
+    background-color: #b4b5be;
+    border-radius: 2vw;
+}
+
+.topic {
+    display: flex;
+    margin: 2vw 4vw 2vw 4vw;
+    flex: 1 1 auto;
+}
+
+.topic-box {
+    display: flexbox;
+    flex-direction: column;
+    background-color: #b4b5be;
+    border-radius: 2vw;
+    padding-bottom: 1vw;
+}
+
+.topic-icon {
+    display: block;
+    width: 15vw;
+    height: 15vw;
+    padding: 3vw;
+    background-color: #343746;
+    border-radius: 2vw;
+    margin-bottom: 1vw;
+    transition-duration: 0.3s;
+}
+
+.topic-icon:hover {
+    width: 16vw;
+    height: 16vw;
+    padding: 2.5vw;
+}
+
+.topic-row {
+    display: block
+}

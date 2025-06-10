@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Ammunition</h2>
+<h4>
+    Ammunition is what loads into magazines or directly into the internal mag of a weapon.
+    Most weapons use cartridges except shotguns which accept shells,
+    and the RPG-7 which is loaded with a PG-7V anti-tank round.
+    Ammunition comes in many variants that have their strengths and drawbacks,
+    the most common variants being FMJ tracer and armor piercing rounds.
+</h4>
+{% for ammo in params %}
+<div class="row">
+    <a href="/ammo/{{ammo[0]}}">
+        <img src="/static/images/ammunition/{{ammo[6]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{ammo[2]}}</h3>
+        <h5>{{ammo[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
