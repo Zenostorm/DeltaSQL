@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Chest Rigs</h2>
+<h4>
+    Placeholder Text
+</h4>
+{% for rig in params %}
+<div class="row">
+    <a href="/rig/{{rig[0]}}">
+        <img src="/static/images/gear/chest rigs/{{rig[12]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{rig[1]}}</h3>
+        <h5>{{rig[11]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

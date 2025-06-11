@@ -72,14 +72,32 @@ WHERE ammunition.id = ?''', (id,))
     print(results)
     return render_template('ammo.html', ammo=results, title=results[1])
 
-@app.route("/armor")
-def all_armor():
+@app.route("/helmets")
+def all_helmets():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM armor ORDER BY type')
+    cur.execute('SELECT * FROM helmets ORDER BY id')
     results = cur.fetchall()
     conn.close()
-    return render_template('armor.html', params=results, title="Armor")
+    return render_template('helmets.html', params=results, title="Helmets")
+
+@app.route("/rigs")
+def all_rigs():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM chest_rigs ORDER BY id')
+    results = cur.fetchall()
+    conn.close()
+    return render_template('rigs.html', params=results, title="Chest rigs")
+
+@app.route("/visors")
+def all_visors():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM visors ORDER BY id')
+    results = cur.fetchall()
+    conn.close()
+    return render_template('visors.html', params=results, title="Visors")
 
 if __name__ == '__main__':
     app.run(debug=True)

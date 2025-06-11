@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Visors</h2>
+<h4>
+    Placeholder Text
+</h4>
+{% for visor in params %}
+<div class="row">
+    <a href="/visor/{{visor[0]}}">
+        <img src="/static/images/gear/visors/{{visor[11]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{visor[1]}}</h3>
+        <h5>{{visor[10]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
