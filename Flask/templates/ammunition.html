@@ -8,6 +8,14 @@
     Ammunition comes in many variants that have their strengths and drawbacks,
     the most common variants being FMJ tracer and armor piercing rounds.
 </h4>
+
+<form method="get" action="/ammunition">
+    <input type="text" name="search" placeholder="Search" value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if params %}
 {% for ammo in params %}
 <div class="row">
     <a href="/ammo/{{ammo[0]}}">
@@ -20,4 +28,15 @@
     </div>
 </div>
 {% endfor %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
 {% endblock %}

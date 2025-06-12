@@ -1,6 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 
+
+easter_egg_queries = ["contributors", "zeno", "pokubit", "immured"]
 
 app = Flask(__name__)
 DATABASE = "delta.db"
@@ -11,14 +13,23 @@ def home():
     return render_template('home.html', title="Home")
 
 
-@app.route("/weapons")
+@app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM weapons ORDER BY type')
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? ORDER BY type", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM weapons ORDER BY type')
+
     results = cur.fetchall()
+    print(results)
     conn.close()
-    return render_template('weapons.html', params=results, title="Weapons")
+    return render_template('weapons.html', params=results, title="Weapons", search=search_query, easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/weapon/<int:id>")
 def weapon(id):
@@ -46,10 +57,17 @@ WHERE weapons.id = ?''', (id,))
 def ammunition():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM ammunition ORDER BY id')
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM ammunition WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM ammunition ORDER BY id')
+
     results = cur.fetchall()
     conn.close()
-    return render_template('ammunition.html', params=results, title="Ammunition")
+    return render_template('ammunition.html', params=results, title="Ammunition", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/ammo/<int:id>")
 def ammo(id):
