@@ -263,7 +263,7 @@ h6 {
     transition-duration: 0.3s;
 }
 
-h6:hover {
+a h6:hover {
     color: #6865CF;
     font-size: 1.5vw;
     text-align: left;

@@ -26,7 +26,6 @@ def all_weapons():
         cur.execute('SELECT * FROM weapons ORDER BY type')
 
     results = cur.fetchall()
-    print(results)
     conn.close()
     return render_template('weapons.html', params=results, title="Weapons", search=search_query, easter_egg_queries=easter_egg_queries)
 
@@ -89,6 +88,28 @@ WHERE ammunition.id = ?''', (id,))
     conn.close()
     print(results)
     return render_template('ammo.html', ammo=results, title=results[1])
+
+@app.route("/components", methods=["GET", "POST"])
+def all_components():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+       cur.execute("SELECT * FROM components WHERE name AND type = 1 LIKE ? ORDER BY type", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM components WHERE type = 1 ORDER BY id')
+    parts = cur.fetchall()
+
+    if search_query:
+       cur.execute("SELECT * FROM components WHERE name AND type = 2 LIKE ? ORDER BY type", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM components WHERE type = 2 ORDER BY id')
+    parts = cur.fetchall()
+
+    conn.close()
+    return render_template('components.html', parts=parts, title="Components", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/helmets")
 def all_helmets():
