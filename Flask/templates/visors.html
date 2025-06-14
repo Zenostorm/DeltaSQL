@@ -4,16 +4,36 @@
 <h4>
     Placeholder Text
 </h4>
+
+<form method="get" action="/visors">
+    <input type="text" name="search" placeholder="Search" value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if params %}
 {% for visor in params %}
 <div class="row">
     <a href="/visor/{{visor[0]}}">
-        <img src="/static/images/gear/visors/{{visor[11]}}" class="icon">
+        <img src="/static/images/gear/visors/{{visor[9]}}" class="icon">
     </a>
 
     <div>
         <h3>{{visor[1]}}</h3>
-        <h5>{{visor[10]}}</h5>
+        <h5>{{visor[8]}}</h5>
     </div>
 </div>
 {% endfor %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
 {% endblock %}
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}

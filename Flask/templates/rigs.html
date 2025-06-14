@@ -2,18 +2,40 @@
 {% block content %}
 <h2>Chest Rigs</h2>
 <h4>
-    Placeholder Text
+    Chest rigs are worn to protect the torso, some rigs also protect your arms.
+    Your torso is the largest target on your body, so bringing a chest rig is essential for survival in the wasteland.
+    Some chest rigs provide extra storage, it's advised to keep items that you need quick access to in your rig such as mags, ammo, or heals.
+    Chest rigs mitigate most of the damage you'll take in a gunfight, but they are often the heaviest part of your kit.
 </h4>
+
+<form method="get" action="/rigs">
+    <input type="text" name="search" placeholder="Search" value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if params %}
 {% for rig in params %}
 <div class="row">
     <a href="/rig/{{rig[0]}}">
-        <img src="/static/images/gear/chest rigs/{{rig[12]}}" class="icon">
+        <img src="/static/images/gear/chest rigs/{{rig[11]}}" class="icon">
     </a>
 
     <div>
         <h3>{{rig[1]}}</h3>
-        <h5>{{rig[11]}}</h5>
+        <h5>{{rig[10]}}</h5>
     </div>
 </div>
 {% endfor %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
 {% endblock %}

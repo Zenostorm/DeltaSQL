@@ -8,7 +8,9 @@
 
         <div class="topic-box">
             <img src="/static/images/ballistics/ammunition/{{ammo[6]}}" class="topic-icon">
-            <h6 class="topic-row">Caliber <br> <span class="lighter">{{ammo[1]}}</span></h6>
+            <a href="http://127.0.0.1:5000/ammunition?search={{ammo[1]}}">
+                <h6 class="topic-row">Caliber <br> <span class="lighter">{{ammo[1]}}</span></h6>
+            </a>
             <h6 class="topic-row">Velocity (m/s) <br> <span class="lighter">{{ammo[3]}}</span></h6>
             <h6 class="topic-row">Damage <br> <span class="lighter">{{ammo[4]}}</span></h6>
             <h6 class="topic-row">Penetration <br> <span class="lighter">{{ammo[5]}}</span></h6>

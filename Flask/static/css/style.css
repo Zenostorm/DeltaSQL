@@ -25,6 +25,15 @@ body {
     opacity: 0.95;
 }
 
+/**Video styles**/
+iframe {
+    display: flex;
+    width: 70vw;
+    height: 40vw;
+    border-radius: 2vw;
+    margin: 0 4vw 2vw 4vw;
+}
+
 nav {
     color: white;
     background-color: #32164b;
@@ -195,6 +204,7 @@ form button:hover {
     background-color: #212228;
 }
 
+/**HEADER LOGO**/
 .logo {
     width: 6vw;
     margin: 1vw 0vw 1vw 2vw;
@@ -229,6 +239,7 @@ a {
     color: black;
     text-decoration: none;
     display: inline-block;
+    transition-duration: 0.3s;
 }
 
 /**text for item icons and topic names**/
@@ -250,8 +261,11 @@ h4 {
 h5 {
     color: black;
     font-size: 1.5vw;
-    margin-top: auto;
     margin: -2vw 5vw 0 2vw;
+}
+
+h5 a:hover {
+    color: #6865CF;
 }
 
 /**STATS TEXT**/

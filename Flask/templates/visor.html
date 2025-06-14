@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="topic">
+    <div>
+        <h3>{{visor[1]}}</h3>
+        <h5>{{visor[8]}}</h5>
+        <h3>Helmet options</h3>
+        <h5>
+            {% for attachment in attachments %}
+            <a href="http://127.0.0.1:5000/helmet/{{attachment[0]}}">
+                <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
+            </a>
+            <br><br>
+            {% endfor %}
+        </h5>
+    </div>
+
+
+        <div class="topic-box">
+            <img src="/static/images/gear/visors/{{visor[9]}}" class="topic-icon">
+            <h6 class="topic-row">Durability <br> <span class="lighter">{{visor[2]}}</span></h6>
+            <h6 class="topic-row">Melee <br> <span class="lighter">{{visor[3]}}</span></h6>
+            <h6 class="topic-row">Ballistic <br> <span class="lighter">{{visor[4]}}</span></h6>
+            <h6 class="topic-row">Radiation <br> <span class="lighter">{{visor[5]}}</span></h6>
+            <h6 class="topic-row">Explosive <br> <span class="lighter">{{visor[6]}}</span></h6>
+        </div>
+</div>
+{% endblock %}
