@@ -4,6 +4,7 @@
     <div>
         <h3>{{helmet[1]}}</h3>
         <h5>{{helmet[9]}}</h5>
+        {% if attachments %}
         <h3>Visor options</h3>
         <h5>
             {% for attachment in attachments %}
@@ -13,6 +14,7 @@
             <br><br>
             {% endfor %}
         </h5>
+        {% endif %}
     </div>
 
 
