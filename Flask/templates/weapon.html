@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "partials/layout.html" %}
 {% block content %}
 <div class="topic">
     <div>
@@ -6,6 +6,17 @@
         <h5>{{weapon[7]}}
             <br> <br>
             {{weapon[9]}}
+            <h3>
+                Magazines
+            </h3>
+            <h5>
+                {% for magazine in magazines %}
+                <a href="http://127.0.0.1:5000/magazine/{{magazine[0]}}">
+                    <i class="fa-solid fa-caret-right"></i> {{magazine[1]}}
+                </a>
+                <br><br>
+                {% endfor %}
+            </h5>
         </h5>
     </div>
 

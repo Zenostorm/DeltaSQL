@@ -49,8 +49,13 @@ FROM weapons
 JOIN calibers ON weapons.caliber_id = calibers.id
 WHERE weapons.id = ?''', (id,))
     results = cur.fetchall()[0]
+
+    cur = conn.cursor()
+    cur.execute('''SELECT id, name FROM magazines WHERE id IN (
+                SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
+    magazines = cur.fetchall()
     conn.close()
-    return render_template('weapon.html', weapon=results, title=results[1])
+    return render_template('weapon.html', weapon=results, magazines=magazines, title=results[1])
  
 @app.route("/ammunition")
 def ammunition():
@@ -105,6 +110,48 @@ def all_parts():
     conn.close()
     return render_template('parts.html', params=results, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
 
+@app.route("/magazines", methods=["GET", "POST"])
+def all_magazines():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+       cur.execute("SELECT * FROM magazines WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM magazines ORDER BY id')
+    
+    results = cur.fetchall()
+    conn.close()
+    return render_template('magazines.html', params=results, title="Magazines", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/magazine/<int:id>")
+def magazine(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT 
+    magazines.id,
+    magazines.name,
+    calibers.name AS caliber_name,
+    magazines.capacity,
+    magazines.recoil_h,
+    magazines.recoil_v,
+    magazines.mobility,
+    magazines.description,
+    magazines.image
+FROM magazines
+JOIN calibers ON magazines.caliber_id = calibers.id
+WHERE magazines.id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    cur = conn.cursor()
+    cur.execute('''SELECT id, name FROM weapons WHERE id IN (
+                SELECT weapon_id FROM weapon_magazines where magazine_id = ?)''', (id,))
+    weapons = cur.fetchall()
+    conn.close()
+    return render_template('magazine.html', magazine=results, weapons=weapons, title=results[1])
+
 @app.route("/helmets")
 def all_helmets():
     conn = sqlite3.connect('delta.db')
@@ -144,7 +191,7 @@ def all_rigs():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM chest_rigs WHERE name LIKE ? ORDER BY type", ('%' + search_query + '%',))
+        cur.execute("SELECT * FROM chest_rigs WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute('SELECT * FROM chest_rigs ORDER BY id')
 

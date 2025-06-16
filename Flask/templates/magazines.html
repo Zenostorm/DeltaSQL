@@ -1,6 +1,6 @@
 {% extends "partials/layout.html" %}
 {% block content %}
-<h2>Weapon Parts</h2>
+<h2>Magazines</h2>
 <h4>
     Placeholder Text
 </h4>
@@ -12,15 +12,15 @@
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if params %}
-{% for part in params %}
+{% for magazine in params %}
 <div class="row">
-    <a href="/part/{{part[0]}}">
-        <img src="/static/images/ballistics/parts/{{part[7]}}" class="icon">
+    <a href="/magazine/{{magazine[0]}}">
+        <img src="/static/images/ballistics/magazines/{{magazine[8]}}" class="icon">
     </a>
 
     <div>
-        <h3>{{part[1]}}</h3>
-        <h5>{{part[5]}}</h5>
+        <h3>{{magazine[1]}}</h3>
+        <h5>{{magazine[7]}}</h5>
     </div>
 </div>
 {% endfor %}
