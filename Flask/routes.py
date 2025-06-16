@@ -212,10 +212,17 @@ def rig(id):
 def all_visors():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('SELECT * FROM visors ORDER BY id')
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+       cur.execute("SELECT * FROM visors WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT * FROM visors ORDER BY id')
+    
     results = cur.fetchall()
     conn.close()
-    return render_template('visors.html', params=results, title="Visors")
+    return render_template('visors.html', params=results, title="Visors", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/visor/<int:id>")
 def visor(id):

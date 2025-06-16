@@ -10,6 +10,7 @@
     <button type="submit">Search</button>
 </form>
 
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if params %}
 {% for visor in params %}
 <div class="row">
@@ -35,5 +36,3 @@
 {% endif %}
 {% include 'partials/easter_eggs.html' %}
 {% endblock %}
-
-{% set is_easter_egg = search and search|lower in easter_egg_queries %}
