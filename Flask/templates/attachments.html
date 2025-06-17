@@ -1,0 +1,52 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<h2>Attachments</h2>
+<h4>
+    Placeholder Text
+</h4>
+
+<form method="get" action="/attachments">
+    <input type="text" name="search" placeholder="Search" value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if optics or muzzles %}
+<h2>Optics</h2>
+{% for optic in optics %}
+<div class="row">
+    <a href="/attachment/{{optic[0]}}">
+        <img src="/static/images/ballistics/attachments/{{optic[7]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{optic[1]}}</h3>
+        <h5>{{optic[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+<h2>Muzzle attachments</h2>
+{% for muzzle in muzzles %}
+<div class="row">
+    <a href="/attachment/{{muzzle[0]}}">
+        <img src="/static/images/ballistics/attachments/{{muzzle[7]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{muzzle[1]}}</h3>
+        <h5>{{muzzle[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
+{% endblock %}

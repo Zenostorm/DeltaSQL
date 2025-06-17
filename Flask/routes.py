@@ -110,6 +110,32 @@ def all_parts():
     conn.close()
     return render_template('parts.html', params=results, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
 
+@app.route("/attachments", methods=["GET", "POST"])
+def all_attachments():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+    # optics
+    if search_query:
+       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'optic'))
+    else:
+        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("optic",))
+    
+    optics = cur.fetchall()
+
+    # muzzles
+    cur = conn.cursor()
+
+    if search_query:
+       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'muzzle'))
+    else:
+        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("muzzle",))
+    
+    muzzles = cur.fetchall()
+    conn.close()
+    return render_template('attachments.html', optics=optics, muzzles=muzzles, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
+
 @app.route("/magazines", methods=["GET", "POST"])
 def all_magazines():
     conn = sqlite3.connect('delta.db')
