@@ -3,18 +3,20 @@
 <div class="topic">
     <div>
         <h3>{{magazine[1]}}</h3>
-        <h5>{{magazine[7]}}</h5>
-        {% if weapons %}
-        <h3>Compatible Weapons</h3>
-        <h5>
-            {% for weapon in weapons %}
-            <a href="http://127.0.0.1:5000/weapon/{{weapon[0]}}">
-                <i class="fa-solid fa-caret-right"></i> {{weapon[1]}}
-            </a>
+        <h5>{{magazine[7]}}
             <br><br>
-            {% endfor %}
+            <div class="link-list">
+                <h3>Compatible Weapons</h3>
+                <h5>
+                    {% for weapon in weapons %}
+                    <a href="http://127.0.0.1:5000/weapon/{{weapon[0]}}">
+                        <i class="fa-solid fa-caret-right"></i> {{weapon[1]}}
+                    </a>
+                    <br>
+                    {% endfor %}
+                </h5>
+            </div>
         </h5>
-        {% endif %}
     </div>
 
 

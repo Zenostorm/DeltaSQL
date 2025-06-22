@@ -3,18 +3,23 @@
 <div class="topic">
     <div>
         <h3>{{helmet[1]}}</h3>
-        <h5>{{helmet[9]}}</h5>
-        {% if attachments %}
-        <h3>Visor options</h3>
-        <h5>
-            {% for attachment in attachments %}
-            <a href="http://127.0.0.1:5000/visor/{{attachment[0]}}">
-                <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
-            </a>
+        <h5>{{helmet[9]}}
             <br><br>
-            {% endfor %}
+            {% if attachments %}
+            <div class="link-list">
+                <!-- Visors list -->
+                <h3>Visors</h3>
+                <h5>
+                    {% for attachment in attachments %}
+                    <a href="http://127.0.0.1:5000/visor/{{attachment[0]}}">
+                        <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
+                    </a>
+                    <br>
+                    {% endfor %}
+                </h5>
+            </div>
+            {% endif %}
         </h5>
-        {% endif %}
     </div>
 
 

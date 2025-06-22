@@ -4,19 +4,35 @@
     <div>
         <h3>{{weapon[1]}}</h3>
         <h5>{{weapon[7]}}
-            <br> <br>
-            {{weapon[9]}}
-            <h3>
-                Magazines
-            </h3>
+        <br><br>
+        {% if optics or attachments %}
+        <div class="link-list">
+            <!-- Optics list -->
+            {% if optics %}
+            <h3>Optics</h3>
+            <h5>
+                {% for optic in optics %}
+                <a href="http://127.0.0.1:5000/attachment/{{optic[0]}}">
+                    <i class="fa-solid fa-caret-right"></i> {{optic[1]}}
+                </a>
+                <br>
+                {% endfor %}
+            </h5>
+            {% endif %}
+            <!-- Magazines list -->
+            {% if magazines %}
+            <h3>Magazines</h3>
             <h5>
                 {% for magazine in magazines %}
                 <a href="http://127.0.0.1:5000/magazine/{{magazine[0]}}">
                     <i class="fa-solid fa-caret-right"></i> {{magazine[1]}}
                 </a>
-                <br><br>
+                <br>
                 {% endfor %}
             </h5>
+            {% endif %}
+        </div>
+        {% endif %}
         </h5>
     </div>
 

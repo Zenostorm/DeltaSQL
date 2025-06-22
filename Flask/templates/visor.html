@@ -3,15 +3,19 @@
 <div class="topic">
     <div>
         <h3>{{visor[1]}}</h3>
-        <h5>{{visor[8]}}</h5>
-        <h3>Helmet options</h3>
-        <h5>
-            {% for attachment in attachments %}
-            <a href="http://127.0.0.1:5000/helmet/{{attachment[0]}}">
-                <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
-            </a>
+        <h5>{{visor[8]}}
             <br><br>
-            {% endfor %}
+            <div class="link-list">
+                <h3>Compatible helmets</h3>
+                <h5>
+                    {% for attachment in attachments %}
+                    <a href="http://127.0.0.1:5000/helmet/{{attachment[0]}}">
+                        <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
+                    </a>
+                    <br>
+                    {% endfor %}
+                </h5>
+            </div>
         </h5>
     </div>
 

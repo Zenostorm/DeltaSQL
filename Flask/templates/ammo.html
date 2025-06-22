@@ -3,7 +3,20 @@
 <div class="topic">
     <div>
         <h3>{{ammo[2]}}</h3>
-        <h5>{{ammo[7]}}</h5>
+        <h5>{{ammo[7]}}
+        <br><br>
+        <div class="link-list">
+            <!-- Weapons list -->
+            <h3>Compatible weapons</h3>
+            <h5>
+                {% for weapon in weapons %}
+                <a href="http://127.0.0.1:5000/weapon/{{weapon[0]}}">
+                    <i class="fa-solid fa-caret-right"></i> {{weapon[1]}}
+                </a>
+                <br>
+                {% endfor %}
+            </h5>
+        </h5>
     </div>
 
         <div class="topic-box">

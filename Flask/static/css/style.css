@@ -264,6 +264,11 @@ h5 {
     margin: -2vw 5vw 0 2vw;
 }
 
+h5 a {
+    font-size: 1.5vw;
+    margin-bottom: 1vw;
+}
+
 h5 a:hover {
     color: #6865CF;
 }
@@ -305,6 +310,7 @@ a h6:hover {
     background-color: #b4b5be;
     border-radius: 2vw;
     padding-bottom: 1vw;
+    margin-bottom: auto;
 }
 
 .topic-icon {
@@ -326,4 +332,11 @@ a h6:hover {
 
 .topic-row {
     display: block
+}
+
+.link-list {
+    background-color: #b4b5be;
+    padding-top: 0.5vw;
+    padding-bottom: 0.5vw;
+    border-radius: 2vw;
 }

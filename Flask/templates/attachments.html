@@ -12,6 +12,7 @@
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if optics or muzzles %}
+<!-- Optics sub-category -->
 <h2>Optics</h2>
 {% for optic in optics %}
 <div class="row">
@@ -25,6 +26,7 @@
     </div>
 </div>
 {% endfor %}
+<!-- Optics sub-category -->
 <h2>Muzzle attachments</h2>
 {% for muzzle in muzzles %}
 <div class="row">
@@ -35,6 +37,20 @@
     <div>
         <h3>{{muzzle[1]}}</h3>
         <h5>{{muzzle[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+<!-- Extras sub-category -->
+<h2>Extras</h2>
+{% for extra in extras %}
+<div class="row">
+    <a href="/attachment/{{extra[0]}}">
+        <img src="/static/images/ballistics/attachments/{{extra[7]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{extra[1]}}</h3>
+        <h5>{{extra[6]}}</h5>
     </div>
 </div>
 {% endfor %}
