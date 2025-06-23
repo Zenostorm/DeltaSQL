@@ -11,8 +11,9 @@
 </form>
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
-{% if optics or muzzles %}
+{% if optics or muzzles or extras %}
 <!-- Optics sub-category -->
+{% if optics %}
 <h2>Optics</h2>
 {% for optic in optics %}
 <div class="row">
@@ -26,7 +27,9 @@
     </div>
 </div>
 {% endfor %}
-<!-- Optics sub-category -->
+{% endif %}
+{% if muzzles %}
+<!-- Muzzle attachemnts sub-category -->
 <h2>Muzzle attachments</h2>
 {% for muzzle in muzzles %}
 <div class="row">
@@ -40,6 +43,8 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+{% if extras %}
 <!-- Extras sub-category -->
 <h2>Extras</h2>
 {% for extra in extras %}
@@ -54,6 +59,7 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
 {% elif not is_easter_egg %}
 <div class="row">
     <img src="/static/images/error.png" class="icon">

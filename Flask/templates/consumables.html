@@ -1,0 +1,90 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<h2>Consumables</h2>
+<h4>
+    Placeholder Text
+</h4>
+
+<form method="get" action="/consumables">
+    <input type="text" name="search" placeholder="Search" value="{{ search }}">
+    <button type="submit">Search</button>
+</form>
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if foods or drinks or medicals or stims %}
+<!-- Food sub-category -->
+{% if foods %}
+<h2>Food</h2>
+{% for food in foods %}
+<div class="row">
+    <a href="/consumable/{{food[0]}}">
+        <img src="/static/images/items/consumables/{{food[11]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{food[1]}}</h3>
+        <h5>{{food[10]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Drinks attachemnts sub-category -->
+{% if drinks %}
+<h2>Drink</h2>
+{% for drink in drinks %}
+<div class="row">
+    <a href="/consumable/{{drink[0]}}">
+        <img src="/static/images/items/consumables/{{drink[11]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{drink[1]}}</h3>
+        <h5>{{drink[10]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Medical sub-category -->
+{% if medicals %}
+<h2>Medical</h2>
+{% for medical in medicals %}
+<div class="row">
+    <a href="/consumable/{{medical[0]}}">
+        <img src="/static/images/items/consumables/{{medical[11]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{medical[1]}}</h3>
+        <h5>{{medical[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Medical sub-category -->
+{% if stims %}
+<h2>Stims</h2>
+{% for stim in stims %}
+<div class="row">
+    <a href="/consumable/{{stim[0]}}">
+        <img src="/static/images/items/consumables/{{stim[11]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{stim[1]}}</h3>
+        <h5>{{stim[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
+{% endblock %}

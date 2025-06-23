@@ -96,6 +96,7 @@ FROM ammunition
 JOIN calibers ON ammunition.caliber_id = calibers.id
 WHERE ammunition.id = ?''', (id,))
     results = cur.fetchall()[0]
+    print(results[4])
 
     cur = conn.cursor()
     cur.execute('''SELECT id, name FROM weapons WHERE id IN (
@@ -128,9 +129,9 @@ def all_attachments():
     search_query = request.args.get('search', '')
     # optics
     if search_query:
-       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'optic'))
+       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Optic'))
     else:
-        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("optic",))
+        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("Optic",))
     
     optics = cur.fetchall()
 
@@ -138,9 +139,9 @@ def all_attachments():
     cur = conn.cursor()
 
     if search_query:
-       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'muzzle'))
+       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Muzzle'))
     else:
-        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("muzzle",))
+        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("Muzzle",))
     
     muzzles = cur.fetchall()
 
@@ -148,9 +149,9 @@ def all_attachments():
     cur = conn.cursor()
 
     if search_query:
-       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'extra'))
+       cur.execute("SELECT * FROM attachments WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Extra'))
     else:
-        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("extra",))
+        cur.execute("SELECT * FROM attachments WHERE type = ? ORDER BY id", ("Extra",))
     
     extras = cur.fetchall()
     conn.close()
@@ -298,6 +299,52 @@ def visor(id):
     print(attachments)
     conn.close()
     return render_template('visor.html', visor=results, attachments=attachments, title=results[1])
+
+@app.route("/consumables")
+def all_consumables():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+    # foods
+    if search_query:
+       cur.execute("SELECT * FROM consumables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Food'))
+    else:
+        cur.execute("SELECT * FROM consumables WHERE type = ? ORDER BY id", ("Food",))
+    
+    foods = cur.fetchall()
+
+    # drinks
+    cur = conn.cursor()
+
+    if search_query:
+       cur.execute("SELECT * FROM consumables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Drink'))
+    else:
+        cur.execute("SELECT * FROM consumables WHERE type = ? ORDER BY id", ("Drink",))
+    
+    drinks = cur.fetchall()
+
+    # medicals
+    cur = conn.cursor()
+
+    if search_query:
+       cur.execute("SELECT * FROM consumables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Medical'))
+    else:
+        cur.execute("SELECT * FROM consumables WHERE type = ? ORDER BY id", ("Medical",))
+    
+    medicals = cur.fetchall()
+
+    # stims
+    cur = conn.cursor()
+
+    if search_query:
+       cur.execute("SELECT * FROM consumables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Stim'))
+    else:
+        cur.execute("SELECT * FROM consumables WHERE type = ? ORDER BY id", ("Stim",))
+    
+    stims = cur.fetchall()
+    conn.close()
+    return render_template('consumables.html', foods=foods, drinks=drinks, medicals=medicals, stims=stims, title="Consumables", search=search_query, easter_egg_queries=easter_egg_queries)
 
 if __name__ == '__main__':
     app.run(debug=True)
