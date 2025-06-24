@@ -15,8 +15,11 @@
 </form>
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
-{% if params %}
-{% for weapon in params %}
+{% if assault_rifles or submachine_guns or light_machine_guns or sniper_rifles or assault_carbines or battle_rifles or shotguns or pistols or rocket_launchers %}
+<!-- Pistols sub-category -->
+{% if pistols %}
+<h2>Pistols</h2>
+{% for weapon in pistols %}
 <div class="row">
     <a href="/weapon/{{weapon[0]}}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
@@ -28,6 +31,119 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+<!-- submachine guns sub-category -->
+{% if submachine_guns %}
+<h2>Submachine Guns</h2>
+{% for weapon in submachine_guns %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- assault carbines sub-category -->
+{% if assault_carbines %}
+<h2>Assault Carbines</h2>
+{% for weapon in assault_carbines %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- shotguns sub-category -->
+{% if shotguns %}
+<h2>Shotguns</h2>
+{% for weapon in shotguns %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- assault rifles sub-category -->
+{% if assault_rifles %}
+<h2>Assault Rifles</h2>
+{% for weapon in assault_rifles %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- sniper rifles sub-category -->
+{% if sniper_rifles %}
+<h2>Sniper Rifles</h2>
+{% for weapon in sniper_rifles %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- light machine guns sub-category -->
+{% if light_machine_guns %}
+<h2>Light Machine Guns</h2>
+{% for weapon in light_machine_guns %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- rocket launchers sub-category -->
+{% if rocket_launchers %}
+<h2>Rocket Launchers</h2>
+{% for weapon in rocket_launchers %}
+<div class="row">
+    <a href="/weapon/{{weapon[0]}}">
+        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{weapon[1]}}</h3>
+        <h5>{{weapon[7]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 {% elif not is_easter_egg %}
 <div class="row">
     <img src="/static/images/error.png" class="icon">

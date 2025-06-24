@@ -16,18 +16,125 @@ def home():
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
     conn = sqlite3.connect('delta.db')
+    # assault rifles
     cur = conn.cursor()
 
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? ORDER BY type", ('%' + search_query + '%',))
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Rifle'))
     else:
-        cur.execute('SELECT * FROM weapons ORDER BY type')
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Rifle', ))
 
-    results = cur.fetchall()
+    assault_rifles = cur.fetchall()
+
+    # submachine guns
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Submachine Gun'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Submachine Gun', ))
+
+    submachine_guns = cur.fetchall()
+    
+    # light machine guns
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Light Machine Gun'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Light Machine Gun', ))
+
+    light_machine_guns = cur.fetchall()
+
+    # sniper rifles
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Sniper Rifle'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Sniper Rifle', ))
+
+    sniper_rifles = cur.fetchall()
+
+    # assault carbines
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Carbine'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Carbine', ))
+
+    assault_carbines = cur.fetchall()
+
+    # battle rifles
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Battle Rifle'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Battle Rifle', ))
+
+    battle_rifles = cur.fetchall()
+
+    # shotguns
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Shotgun'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Shotgun', ))
+
+    shotguns = cur.fetchall()
+
+    # pistols
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Pistol'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Pistol', ))
+
+    pistols = cur.fetchall()
+
+    # rocket launchers
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Rocket Launcher'))
+    else:
+        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Rocket Launcher', ))
+
+    rocket_launchers = cur.fetchall()
     conn.close()
-    return render_template('weapons.html', params=results, title="Weapons", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('weapons.html', 
+                           assault_rifles=assault_rifles, 
+                           submachine_guns=submachine_guns, 
+                           light_machine_guns=light_machine_guns, 
+                           sniper_rifles=sniper_rifles, 
+                           assault_carbines=assault_carbines, 
+                           battle_rifles=battle_rifles, 
+                           shotguns=shotguns, 
+                           pistols=pistols, 
+                           rocket_launchers=rocket_launchers, 
+                           title="Weapons", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/weapon/<int:id>")
 def weapon(id):
