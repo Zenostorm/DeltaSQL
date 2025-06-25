@@ -18,4 +18,17 @@
             <h6 class="topic-row">Storage <br> <span class="lighter">{{rig[9]}}</span></h6>
         </div>
 </div>
+
+<div class="ballistics-table">
+    <h3>Ballistics Chart</h3>
+    <h5>
+        {% for name, damage in ammunition.items() %}
+        <div class="ballistics-row">
+            <a>
+                <i class="fa-solid fa-caret-right"></i> {{ name }} | Damage:  {{ damage }}
+            </a>
+        </div>
+        {% endfor %}
+    </h5>
+</div>
 {% endblock %}

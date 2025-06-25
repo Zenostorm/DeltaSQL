@@ -2,8 +2,8 @@
 body {
     background-image: url("../images/background.png");
     background-repeat: no-repeat;
-    background-attachment: fixed; 
-    background-size: 100% 100%;
+    background-size: cover;
+    background-attachment: fixed;
     margin: 0;
     font-family: "Raleway";
 }
@@ -23,6 +23,12 @@ body {
     margin-bottom: 2vw;
     padding-bottom: 2vw;
     opacity: 0.95;
+}
+
+footer {
+    font-family: "bungee";
+    margin-left: 1vw;
+    font-size: 1vw;
 }
 
 /**Video styles**/
@@ -339,4 +345,38 @@ a h6:hover {
     padding-top: 0.5vw;
     padding-bottom: 0.5vw;
     border-radius: 2vw;
+}
+
+.link-row {
+    display: flex;
+    flex: 1 1 auto;
+    background-color: #8e909e;
+    padding: 1vw 0 0 1vw;
+    margin-bottom: 1.25vw;
+    border-radius: 1vw;
+}
+
+.link-icon {
+    width: 2vw;
+    height: 2vw;
+}
+
+/**BALLISTICS TABLE**/
+.ballistics-table {
+    background-color: #b4b5be;
+    padding-top: 0.5vw;
+    padding-bottom: 2vw;
+    border-radius: 2vw;
+    display: block;
+    margin: 0 4vw 1vw 4vw;
+}
+
+.ballistics-row {
+    display: flex;
+    flex: 1 1 auto;
+    background-color: #8e909e;
+    padding: 1vw 0 0 1vw;
+    border-style: solid;
+    border-color: black;
+    border-width: 0.5vw;
 }

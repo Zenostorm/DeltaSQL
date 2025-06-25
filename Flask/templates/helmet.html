@@ -11,10 +11,12 @@
                 <h3>Visors</h3>
                 <h5>
                     {% for attachment in attachments %}
-                    <a href="http://127.0.0.1:5000/visor/{{attachment[0]}}">
-                        <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
-                    </a>
-                    <br>
+                    <div class="link-row">
+                        <img src="/static/images/gear/visors/{{attachment[2]}}" class="link-icon">
+                        <a href="http://127.0.0.1:5000/visor/{{attachment[0]}}">
+                            <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
+                        </a>
+                    </div>
                     {% endfor %}
                 </h5>
             </div>

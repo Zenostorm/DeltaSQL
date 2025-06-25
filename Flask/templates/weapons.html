@@ -9,10 +9,7 @@
     while the most reliable weapons are versatile and proficient at all ranges.
 </h4>
 
-<form method="get" action="/weapons">
-    <input type="text" name="search" placeholder="Search" value="{{ search }}">
-    <button type="submit">Search</button>
-</form>
+{% include 'partials/searchbar.html' %}
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if assault_rifles or submachine_guns or light_machine_guns or sniper_rifles or assault_carbines or battle_rifles or shotguns or pistols or rocket_launchers %}

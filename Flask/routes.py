@@ -158,13 +158,13 @@ WHERE weapons.id = ?''', (id,))
 
     # fetch optics
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM attachments WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_optics where weapon_id = ?)''', (id,))
     optics = cur.fetchall()
     
     # fetch magazines
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM magazines WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM magazines WHERE id IN (
                 SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
     magazines = cur.fetchall()
     conn.close()
@@ -203,10 +203,10 @@ FROM ammunition
 JOIN calibers ON ammunition.caliber_id = calibers.id
 WHERE ammunition.id = ?''', (id,))
     results = cur.fetchall()[0]
-    print(results[4])
+    print(results[4] * results[5] / 90)
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM weapons WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
                 SELECT weapon_id FROM weapon_ammo where ammo_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
@@ -272,7 +272,7 @@ def attachment(id):
     results = cur.fetchall()[0]
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM weapons WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
                 SELECT weapon_id FROM weapon_attachments where attachment_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
@@ -314,7 +314,7 @@ WHERE magazines.id = ?''', (id,))
     results = cur.fetchall()[0]
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM weapons WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
                 SELECT weapon_id FROM weapon_magazines where magazine_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
@@ -344,7 +344,7 @@ def helmet(id):
     results = cur.fetchall()[0]
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM visors WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM visors WHERE id IN (
                 SELECT visor_id FROM helmet_attachments where helmet_id = ?)''', (id,))
     attachments = cur.fetchall()
     print(attachments)
@@ -369,12 +369,31 @@ def all_rigs():
 
 @app.route("/rig/<int:id>")
 def rig(id):
+    ballistics = {}
+    num = 0
+
     conn = sqlite3.connect('delta.db')
+    # pull chest rig data
     cur = conn.cursor()
     cur.execute('''SELECT * FROM chest_rigs WHERE chest_rigs.id = ?''', (id,))
     results = cur.fetchall()[0]
+
+    # pull damage and piercing from ammunition
+    cur = conn.cursor()
+    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    ammunition = cur.fetchall()
+
+    # damage function
+    for ammo in ammunition:
+        if ammunition[num][1] < results[4]:
+            ballistics[ammunition[num][2]] = round(ammunition[num][0] * ammunition[num][1] / results[4])
+        else:
+            ballistics[ammunition[num][2]] = ammunition[num][0]
+        num += 1
+
+    print(ballistics)
     conn.close()
-    return render_template('rig.html', rig=results, title=results[1])
+    return render_template('rig.html', rig=results, ammunition=ballistics, title=results[1])
 
 @app.route("/visors")
 def all_visors():
@@ -400,7 +419,7 @@ def visor(id):
     results = cur.fetchall()[0]
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name FROM helmets WHERE id IN (
+    cur.execute('''SELECT id, name, image FROM helmets WHERE id IN (
                 SELECT helmet_id FROM helmet_attachments where visor_id = ?)''', (id,))
     attachments = cur.fetchall()
     print(attachments)

@@ -9,10 +9,7 @@
     the most common variants being FMJ tracer and armor piercing rounds.
 </h4>
 
-<form method="get" action="/ammunition">
-    <input type="text" name="search" placeholder="Search" value="{{ search }}">
-    <button type="submit">Search</button>
-</form>
+{% include 'partials/searchbar.html' %}
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if params %}
