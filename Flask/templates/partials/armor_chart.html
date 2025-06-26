@@ -1,0 +1,13 @@
+<div class="ballistics-table">
+    <h3>Ballistics Chart</h3>
+    <h5>
+        {% for name, value in ballistics.items() %}
+        <div class="ballistics-row">
+            <img src="/static/images/ballistics/ammunition/{{ value [1] }}" class="ballistics-icon">
+            <a>
+                </i> {{ name }} <br> Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}
+            </a>
+        </div>
+        {% endfor %}
+    </h5>
+</div>

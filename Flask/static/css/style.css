@@ -364,6 +364,7 @@ a h6:hover {
 /**BALLISTICS TABLE**/
 .ballistics-table {
     background-color: #b4b5be;
+    padding-left: 1vw;
     padding-top: 0.5vw;
     padding-bottom: 2vw;
     border-radius: 2vw;
@@ -374,9 +375,15 @@ a h6:hover {
 .ballistics-row {
     display: flex;
     flex: 1 1 auto;
-    background-color: #8e909e;
     padding: 1vw 0 0 1vw;
+    background-color: #8e909e;
     border-style: solid;
     border-color: black;
-    border-width: 0.5vw;
+    border-width: 0;
+    border-top-width: 0.4vw;
+}
+
+.ballistics-icon {
+    width: 5vw;
+    height: 5vw;
 }

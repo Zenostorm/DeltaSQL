@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from math import ceil, floor
 import sqlite3
 
 
@@ -338,6 +339,9 @@ def all_helmets():
 
 @app.route("/helmet/<int:id>")
 def helmet(id):
+    ballistics = {}
+    num = 0
+
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute('''SELECT * FROM helmets WHERE helmets.id = ?''', (id,))
@@ -347,9 +351,22 @@ def helmet(id):
     cur.execute('''SELECT id, name, image FROM visors WHERE id IN (
                 SELECT visor_id FROM helmet_attachments where helmet_id = ?)''', (id,))
     attachments = cur.fetchall()
-    print(attachments)
+
+    # pull damage and piercing from ammunition
+    cur = conn.cursor()
+    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    ammunition = cur.fetchall()
+
+    # damage function
+    for ammo in ammunition:
+        if ammunition[num][1] < results[4]:
+            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
+        else:
+            ballistics[ammunition[num][2]] = 2 * ammunition[num][0], ammunition[num][3], ceil(50 / ammunition[num][0])
+        num += 1
+
     conn.close()
-    return render_template('helmet.html', helmet=results, attachments=attachments, title=results[1])
+    return render_template('helmet.html', helmet=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/rigs")
 def all_rigs():
@@ -386,14 +403,13 @@ def rig(id):
     # damage function
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = round(ammunition[num][0] * ammunition[num][1] / results[4])
+            ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
         else:
-            ballistics[ammunition[num][2]] = ammunition[num][0]
+            ballistics[ammunition[num][2]] = ammunition[num][0], ammunition[num][3], ceil(100 / ammunition[num][0])
         num += 1
 
-    print(ballistics)
     conn.close()
-    return render_template('rig.html', rig=results, ammunition=ballistics, title=results[1])
+    return render_template('rig.html', rig=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/visors")
 def all_visors():
@@ -413,6 +429,9 @@ def all_visors():
 
 @app.route("/visor/<int:id>")
 def visor(id):
+    ballistics = {}
+    num = 0
+
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute('''SELECT * FROM visors WHERE visors.id = ?''', (id,))
@@ -422,9 +441,22 @@ def visor(id):
     cur.execute('''SELECT id, name, image FROM helmets WHERE id IN (
                 SELECT helmet_id FROM helmet_attachments where visor_id = ?)''', (id,))
     attachments = cur.fetchall()
-    print(attachments)
+
+        # pull damage and piercing from ammunition
+    cur = conn.cursor()
+    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    ammunition = cur.fetchall()
+
+    # damage function
+    for ammo in ammunition:
+        if ammunition[num][1] < results[4]:
+            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
+        else:
+            ballistics[ammunition[num][2]] = 2 * ammunition[num][0], ammunition[num][3], ceil(50 / ammunition[num][0])
+        num += 1
+
     conn.close()
-    return render_template('visor.html', visor=results, attachments=attachments, title=results[1])
+    return render_template('visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/consumables")
 def all_consumables():
@@ -471,6 +503,21 @@ def all_consumables():
     stims = cur.fetchall()
     conn.close()
     return render_template('consumables.html', foods=foods, drinks=drinks, medicals=medicals, stims=stims, title="Consumables", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/items")
+def all_items():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+       cur.execute("SELECT * FROM junk WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%'))
+    else:
+        cur.execute("SELECT * FROM junk ORDER BY id")
+    results = cur.fetchall()
+    conn.close()
+    return render_template('items.html', params=results, title="Junk", search=search_query, easter_egg_queries=easter_egg_queries)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,35 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<h2>Junk</h2>
+<h4>
+    Placeholder Text
+</h4>
+
+{% include 'partials/searchbar.html' %}
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if params %}
+{% for item in params %}
+<div class="row">
+    <a href="/item/{{item[0]}}">
+        <img src="/static/images/items/junk/{{item[5]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{item[1]}}</h3>
+        <h5>{{item[2]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
+{% endblock %}
