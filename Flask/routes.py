@@ -163,13 +163,20 @@ WHERE weapons.id = ?''', (id,))
                 SELECT attachment_id FROM weapon_optics where weapon_id = ?)''', (id,))
     optics = cur.fetchall()
     
+    # fetch extras
+    cur = conn.cursor()
+    cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
+                SELECT attachment_id FROM weapon_extras where weapon_id = ?)''', (id,))
+    extras = cur.fetchall()
+
     # fetch magazines
     cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM magazines WHERE id IN (
                 SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
     magazines = cur.fetchall()
+
     conn.close()
-    return render_template('weapon.html', weapon=results, optics=optics, magazines=magazines, title=results[1])
+    return render_template('weapon.html', weapon=results, optics=optics, extras=extras, magazines=magazines, title=results[1])
  
 @app.route("/ammunition")
 def ammunition():
@@ -220,14 +227,45 @@ def all_parts():
 
     search_query = request.args.get('search', '')
 
+    # fronts
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
     if search_query:
-       cur.execute("SELECT * FROM parts WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT * FROM parts WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Front'))
     else:
-        cur.execute('SELECT * FROM parts ORDER BY id')
+        cur.execute('SELECT * FROM parts WHERE type = ? ORDER BY id', ('Front', ))
+
+    fronts = cur.fetchall()
+
+    # handles
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM parts WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Handle'))
+    else:
+        cur.execute('SELECT * FROM parts WHERE type = ? ORDER BY id', ('Handle', ))
+
+    handles = cur.fetchall()
     
+    # stocks
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT * FROM parts WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', 'Stock'))
+    else:
+        cur.execute('SELECT * FROM parts WHERE type = ? ORDER BY id', ('Stock', ))
+
+    stocks = cur.fetchall()
+
     results = cur.fetchall()
     conn.close()
-    return render_template('parts.html', params=results, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('parts.html', fronts=fronts, handles=handles, stocks=stocks, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/attachments", methods=["GET", "POST"])
 def all_attachments():
@@ -518,6 +556,21 @@ def all_items():
     results = cur.fetchall()
     conn.close()
     return render_template('items.html', params=results, title="Junk", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/containers")
+def all_containers():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+       cur.execute("SELECT * FROM containers WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%'))
+    else:
+        cur.execute("SELECT * FROM containers ORDER BY id")
+    results = cur.fetchall()
+    conn.close()
+    return render_template('containers.html', params=results, title="Lootable Containers", search=search_query, easter_egg_queries=easter_egg_queries)
 
 if __name__ == '__main__':
     app.run(debug=True)

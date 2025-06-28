@@ -21,6 +21,20 @@
                 {% endfor %}
             </h5>
             {% endif %}
+            <!-- Extras list -->
+            {% if extras %}
+            <h3>Extras</h3>
+            <h5>
+                {% for extra in extras %}
+                <div class="link-row">
+                    <img src="/static/images/ballistics/attachments/{{extra[2]}}" class="link-icon">
+                    <a href="http://127.0.0.1:5000/attachment/{{extra[0]}}">
+                        <i class="fa-solid fa-caret-right"></i> {{extra[1]}}
+                    </a>
+                </div>
+                {% endfor %}
+            </h5>
+            {% endif %}
             <!-- Magazines list -->
             {% if magazines %}
             <h3>Magazines</h3>

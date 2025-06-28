@@ -1,6 +1,6 @@
 {% extends "partials/layout.html" %}
 {% block content %}
-<h2>Junk</h2>
+<h2>Lootable Containers</h2>
 <h4>
     Placeholder Text
 </h4>
@@ -9,15 +9,15 @@
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if params %}
-{% for item in params %}
+{% for container in params %}
 <div class="row">
-    <a href="/item/{{item[0]}}">
-        <img src="/static/images/items/junk/{{item[5]}}" class="icon">
+    <a href="/item/{{container[0]}}">
+        <img src="/static/images/items/containers/{{container[4]}}" class="icon">
     </a>
 
     <div>
-        <h3>{{item[1]}}</h3>
-        <h5>{{item[4]}}</h5>
+        <h3>{{container[1]}}</h3>
+        <h5>{{container[3]}}</h5>
     </div>
 </div>
 {% endfor %}

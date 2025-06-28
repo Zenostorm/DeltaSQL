@@ -8,19 +8,55 @@
 {% include 'partials/searchbar.html' %}
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
-{% if params %}
-{% for part in params %}
+{% if fronts or handles or stocks %}
+<!-- fronts -->
+{% if fronts %}
+<h2>Fronts</h2>
+{% for front in fronts %}
 <div class="row">
-    <a href="/part/{{part[0]}}">
-        <img src="/static/images/ballistics/parts/{{part[7]}}" class="icon">
+    <a href="/part/{{front[0]}}">
+        <img src="/static/images/ballistics/parts/{{front[7]}}" class="icon">
     </a>
 
     <div>
-        <h3>{{part[1]}}</h3>
-        <h5>{{part[5]}}</h5>
+        <h3>{{front[1]}}</h3>
+        <h5>{{front[6]}}</h5>
     </div>
 </div>
 {% endfor %}
+{% endif %}
+<!-- handles -->
+{% if handles %}
+<h2>Handles</h2>
+{% for handle in handles %}
+<div class="row">
+    <a href="/part/{{handle[0]}}">
+        <img src="/static/images/ballistics/parts/{{handle[7]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{handle[1]}}</h3>
+        <h5>{{handle[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- stocks -->
+{% if stocks %}
+<h2>Stocks</h2>
+{% for stock in stocks %}
+<div class="row">
+    <a href="/part/{{stock[0]}}">
+        <img src="/static/images/ballistics/parts/{{stock[7]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{stock[1]}}</h3>
+        <h5>{{stock[6]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 {% elif not is_easter_egg %}
 <div class="row">
     <img src="/static/images/error.png" class="icon">
