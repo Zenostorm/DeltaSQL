@@ -27,8 +27,15 @@ body {
 
 footer {
     font-family: "bungee";
+    margin: 0;
     margin-left: 1vw;
     font-size: 1vw;
+}
+
+hr {
+    margin: 0 3vw 1vw 3vw;
+    height: 0.2vw;
+    background-color: black;
 }
 
 /**Video styles**/
@@ -364,9 +371,7 @@ a h6:hover {
 /**BALLISTICS TABLE**/
 .ballistics-table {
     background-color: #b4b5be;
-    padding-left: 1vw;
-    padding-top: 0.5vw;
-    padding-bottom: 2vw;
+    padding: 0.5vw 0 2vw 0;
     border-radius: 2vw;
     display: block;
     margin: 0 4vw 1vw 4vw;
@@ -375,15 +380,24 @@ a h6:hover {
 .ballistics-row {
     display: flex;
     flex: 1 1 auto;
-    padding: 1vw 0 0 1vw;
-    background-color: #8e909e;
-    border-style: solid;
+    padding: 1vw 0 0.5vw 1vw;
+    margin: 0;
+    border: 0;
+    border-top: 0.3vw;
     border-color: black;
-    border-width: 0;
-    border-top-width: 0.4vw;
+    border-style: solid;
+    width: 65vw;
 }
 
 .ballistics-icon {
-    width: 5vw;
-    height: 5vw;
+    width: 4vw;
+    height: 4vw;
+    margin: 0 0.5vw 0 0;
+}
+
+b1 {
+    color: black;
+    font-size: 1.5vw;
+    margin: 0 2vw 1vw auto;
+    text-align: end;
 }

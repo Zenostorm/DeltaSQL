@@ -5,8 +5,9 @@
         <div class="ballistics-row">
             <img src="/static/images/ballistics/ammunition/{{ value [1] }}" class="ballistics-icon">
             <a>
-                </i> {{ name }} <br> Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}
+                {{ name }}
             </a>
+            <b1>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</b1>
         </div>
         {% endfor %}
     </h5>
