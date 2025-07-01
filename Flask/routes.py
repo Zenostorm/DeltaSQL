@@ -196,6 +196,11 @@ def ammunition():
 
 @app.route("/ammo/<int:id>")
 def ammo(id):
+    helmet_ballistics = {}
+    visor_ballistics = {}
+    rig_ballistics = {}
+    num = 0
+
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute('''SELECT 
@@ -211,14 +216,58 @@ FROM ammunition
 JOIN calibers ON ammunition.caliber_id = calibers.id
 WHERE ammunition.id = ?''', (id,))
     results = cur.fetchall()[0]
-    print(results[4] * results[5] / 90)
 
     cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
                 SELECT weapon_id FROM weapon_ammo where ammo_id = ?)''', (id,))
     weapons = cur.fetchall()
+
+    # pull protection from helmets
+    cur = conn.cursor()
+    cur.execute('SELECT ballistic, name, image FROM helmets')
+    helmets = cur.fetchall()
+
+    # helmet damage function
+    num = 0
+    print(results[4])
+    for helmet in helmets:
+        if results[5] < helmets[num][0]:
+            helmet_ballistics[helmets[num][1]] = floor(2 * results[4] * results[5] / helmets[num][0]), helmets[num][2], ceil(50 / floor(results[4] * results[5] / helmets[num][0]))
+        else:
+            helmet_ballistics[helmets[num][2]] = 2 * results[4], helmets[num][2], ceil(50 / floor(2 * results[4] * results[5] / helmets[num][0]))
+        num += 1
+    
+    # pull protection from visors
+    cur = conn.cursor()
+    cur.execute('SELECT ballistic, name, image FROM visors')
+    visors = cur.fetchall()
+
+    # visor damage function
+    num = 0
+    print(results[4])
+    for visor in visors:
+        if results[5] < visors[num][0]:
+            visor_ballistics[visors[num][1]] = floor(2 * results[4] * results[5] / visors[num][0]), visors[num][2], ceil(50 / floor(results[4] * results[5] / visors[num][0]))
+        else:
+            visor_ballistics[visors[num][2]] = 2 * results[4], visors[num][2], ceil(50 / floor(2 * results[4] * results[5] / visors[num][0]))
+        num += 1
+
+    # pull protection from rigs
+    cur = conn.cursor()
+    cur.execute('SELECT ballistic, name, image FROM chest_rigs')
+    rigs = cur.fetchall()
+
+    # rig damage function
+    num = 0
+    print(results[4])
+    for rig in rigs:
+        if results[5] < rigs[num][0]:
+            rig_ballistics[rigs[num][1]] = floor(2 * results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(50 / floor(results[4] * results[5] / rigs[num][0]))
+        else:
+            rig_ballistics[rigs[num][2]] = 2 * results[4], rigs[num][2], ceil(50 / floor(2 * results[4] * results[5] / rigs[num][0]))
+        num += 1
     conn.close()
-    return render_template('ammo.html', ammo=results, weapons=weapons, title=results[1])
+    return render_template('ammo.html', ammo=results, weapons=weapons, helmet_ballistics=helmet_ballistics, visor_ballistics=visor_ballistics, rig_ballistics=rig_ballistics, title=results[1])
 
 @app.route("/parts", methods=["GET", "POST"])
 def all_parts():
