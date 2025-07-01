@@ -379,7 +379,7 @@ a h6:hover {
 /**BALLISTICS TABLE**/
 .ballistics-table {
     background-color: #b4b5be;
-    padding: 0.5vw 0 2vw 0;
+    padding: 0.5vw 0 0.5vw 0;
     border-radius: 2vw;
     display: block;
     margin: 0 4vw 1vw 4vw;
