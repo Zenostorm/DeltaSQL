@@ -385,6 +385,35 @@ a h6:hover {
     margin: 0 4vw 1vw 4vw;
 }
 
+.chart-toggle {
+    cursor: pointer;
+    background: #8e909e;
+    padding: 0.5vw 1vw 0.5vw 1vw;
+    border: none;
+    border-radius: 1vw;
+    color: black;
+    font-size: 2vw;
+    margin: 0.5vw auto 0.5vw 1vw;
+    font-family: 'Bungee';
+    transition-duration: 0.3s;
+}
+
+.chart-toggle:hover {
+    color: #6865CF;
+}
+
+.ballistics-content {
+    max-height: 0;
+    overflow: hidden;
+    padding-top: 0;
+    transition-duration: 0.3s;
+}
+
+.ballistics-content.open {
+    max-height: 1000vw;
+    padding-top: 3vw;
+}
+
 .ballistics-row {
     display: flex;
     flex: 1 1 auto;
@@ -403,7 +432,7 @@ a h6:hover {
     margin: 0 0.5vw 0 0;
 }
 
-b1 {
+.ballistics-row h4 {
     color: black;
     font-size: 1.5vw;
     margin: 0 2vw 1vw auto;

@@ -234,7 +234,7 @@ WHERE ammunition.id = ?''', (id,))
         if results[5] < helmets[num][0]:
             helmet_ballistics[helmets[num][1]] = floor(2 * results[4] * results[5] / helmets[num][0]), helmets[num][2], ceil(50 / floor(results[4] * results[5] / helmets[num][0]))
         else:
-            helmet_ballistics[helmets[num][2]] = 2 * results[4], helmets[num][2], ceil(50 / floor(2 * results[4] * results[5] / helmets[num][0]))
+            helmet_ballistics[helmets[num][1]] = 2 * results[4], helmets[num][2], ceil(50 / (results[4]))
         num += 1
     
     # pull protection from visors
@@ -249,7 +249,7 @@ WHERE ammunition.id = ?''', (id,))
         if results[5] < visors[num][0]:
             visor_ballistics[visors[num][1]] = floor(2 * results[4] * results[5] / visors[num][0]), visors[num][2], ceil(50 / floor(results[4] * results[5] / visors[num][0]))
         else:
-            visor_ballistics[visors[num][2]] = 2 * results[4], visors[num][2], ceil(50 / floor(2 * results[4] * results[5] / visors[num][0]))
+            visor_ballistics[visors[num][1]] = 2 * results[4], visors[num][2], ceil(50 / results[4])
         num += 1
 
     # pull protection from rigs
@@ -262,10 +262,12 @@ WHERE ammunition.id = ?''', (id,))
     print(results[4])
     for rig in rigs:
         if results[5] < rigs[num][0]:
-            rig_ballistics[rigs[num][1]] = floor(2 * results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(50 / floor(results[4] * results[5] / rigs[num][0]))
+            rig_ballistics[rigs[num][1]] = floor(results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(100 / floor(results[4] * results[5] / rigs[num][0]))
         else:
-            rig_ballistics[rigs[num][2]] = 2 * results[4], rigs[num][2], ceil(50 / floor(2 * results[4] * results[5] / rigs[num][0]))
+            rig_ballistics[rigs[num][1]] = results[4], rigs[num][2], ceil(100 / results[4])
         num += 1
+
+    print(visor_ballistics)
     conn.close()
     return render_template('ammo.html', ammo=results, weapons=weapons, helmet_ballistics=helmet_ballistics, visor_ballistics=visor_ballistics, rig_ballistics=rig_ballistics, title=results[1])
 

@@ -1,14 +1,21 @@
 <div class="ballistics-table">
-    <h3>Ballistics Chart</h3>
-    <h5>
-        {% for name, value in ballistics.items() %}
-        <div class="ballistics-row">
-            <img src="/static/images/ballistics/ammunition/{{ value [1] }}" class="ballistics-icon">
-            <a>
-                {{ name }}
-            </a>
-            <b1>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</b1>
-        </div>
-        {% endfor %}
-    </h5>
+    <button class="chart-toggle" onclick="toggleChart(this)">Ballistics Chart</button>
+    <div class="ballistics-content">
+        <h5>
+            {% for name, value in ballistics.items() %}
+            <div class="ballistics-row">
+                <img src="/static/images/ballistics/ammunition/{{ value [1] }}" class="ballistics-icon">
+                <a>{{ name }}</a>
+                <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
+            </div>
+            {% endfor %}
+        </h5>
+    </div>
 </div>
+
+<script>
+    function toggleChart(button) {
+        const content = button.nextElementSibling;
+        content.classList.toggle("open");
+    }
+</script>

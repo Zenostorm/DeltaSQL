@@ -1,44 +1,51 @@
 <div class="ballistics-table">
-    <h3>Helmet Chart</h3>
-    <h5>
-        {% for name, value in helmet_ballistics.items() %}
-        <div class="ballistics-row">
-            <img src="/static/images/gear/helmets/{{ value [1] }}" class="ballistics-icon">
-            <a>
-                {{ name }}
-            </a>
-            <b1>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</b1>
-        </div>
-        {% endfor %}
-    </h5>
+    <button class="chart-toggle" onclick="toggleChart(this)">Helmet Chart</button>
+    <div class="ballistics-content">
+        <h5>
+            {% for name, value in helmet_ballistics.items() %}
+            <div class="ballistics-row">
+                <img src="/static/images/gear/helmets/{{ value [1] }}" class="ballistics-icon">
+                <a>{{ name }}</a>
+                <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
+            </div>
+            {% endfor %}
+        </h5>
+    </div>
 </div>
 
 <div class="ballistics-table">
-    <h3>Visor Chart</h3>
-    <h5>
-        {% for name, value in visor_ballistics.items() %}
-        <div class="ballistics-row">
-            <img src="/static/images/gear/visors/{{ value [1] }}" class="ballistics-icon">
-            <a>
-                {{ name }}
-            </a>
-            <b1>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</b1>
-        </div>
-        {% endfor %}
-    </h5>
+    <button class="chart-toggle" onclick="toggleChart(this)">Visor Chart</button>
+    <div class="ballistics-content">
+        <h5>
+            {% for name, value in visor_ballistics.items() %}
+            <div class="ballistics-row">
+                <img src="/static/images/gear/visors/{{ value [1] }}" class="ballistics-icon">
+                <a>{{ name }}</a>
+                <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
+            </div>
+            {% endfor %}
+        </h5>
+    </div>
 </div>
 
 <div class="ballistics-table">
-    <h3>Chest Rig Chart</h3>
-    <h5>
-        {% for name, value in rig_ballistics.items() %}
-        <div class="ballistics-row">
-            <img src="/static/images/gear/chest rigs/{{ value [1] }}" class="ballistics-icon">
-            <a>
-                {{ name }}
-            </a>
-            <b1>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</b1>
-        </div>
-        {% endfor %}
-    </h5>
+    <button class="chart-toggle" onclick="toggleChart(this)">Chest Rig Chart</button>
+    <div class="ballistics-content">
+        <h5>
+            {% for name, value in rig_ballistics.items() %}
+            <div class="ballistics-row">
+                <img src="/static/images/gear/chest rigs/{{ value [1] }}" class="ballistics-icon">
+                <a>{{ name }}</a>
+                <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
+            </div>
+            {% endfor %}
+        </h5>
+    </div>
 </div>
+
+<script>
+    function toggleChart(button) {
+        const content = button.nextElementSibling;
+        content.classList.toggle("open");
+    }
+</script>
