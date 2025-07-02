@@ -11,16 +11,16 @@
 {% if fronts or handles or stocks %}
 <!-- fronts -->
 {% if fronts %}
-<h2>Fronts</h2>
+<h2>Front Assemblies</h2>
 {% for front in fronts %}
 <div class="row">
     <a href="/part/{{front[0]}}">
-        <img src="/static/images/ballistics/parts/{{front[7]}}" class="icon">
+        <img src="/static/images/ballistics/parts/{{front[8]}}" class="icon">
     </a>
 
     <div>
         <h3>{{front[1]}}</h3>
-        <h5>{{front[6]}}</h5>
+        <h5>{{front[7]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -31,12 +31,12 @@
 {% for handle in handles %}
 <div class="row">
     <a href="/part/{{handle[0]}}">
-        <img src="/static/images/ballistics/parts/{{handle[7]}}" class="icon">
+        <img src="/static/images/ballistics/parts/{{handle[8]}}" class="icon">
     </a>
 
     <div>
         <h3>{{handle[1]}}</h3>
-        <h5>{{handle[6]}}</h5>
+        <h5>{{handle[7]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -47,12 +47,12 @@
 {% for stock in stocks %}
 <div class="row">
     <a href="/part/{{stock[0]}}">
-        <img src="/static/images/ballistics/parts/{{stock[7]}}" class="icon">
+        <img src="/static/images/ballistics/parts/{{stock[8]}}" class="icon">
     </a>
 
     <div>
         <h3>{{stock[1]}}</h3>
-        <h5>{{stock[6]}}</h5>
+        <h5>{{stock[7]}}</h5>
     </div>
 </div>
 {% endfor %}

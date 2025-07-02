@@ -318,6 +318,21 @@ def all_parts():
     conn.close()
     return render_template('parts.html', fronts=fronts, handles=handles, stocks=stocks, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
 
+@app.route("/part/<int:id>")
+def part(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM parts WHERE parts.id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    cur = conn.cursor()
+    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
+                SELECT weapon_id FROM weapon_parts where part_id = ?)''', (id,))
+    weapons = cur.fetchall()
+    print(weapons)
+    conn.close()
+    return render_template('part.html', part=results, weapons=weapons, title=results[1])
+
 @app.route("/attachments", methods=["GET", "POST"])
 def all_attachments():
     conn = sqlite3.connect('delta.db')
@@ -405,7 +420,7 @@ WHERE magazines.id = ?''', (id,))
 
     cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
-                SELECT weapon_id FROM weapon_magazines where magazine_id = ?)''', (id,))
+                SELECT weapon_id FROM weapon_parts where part_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
     return render_template('magazine.html', magazine=results, weapons=weapons, title=results[1])

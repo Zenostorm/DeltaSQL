@@ -406,7 +406,7 @@ a h6:hover {
     max-height: 0;
     overflow: hidden;
     padding-top: 0;
-    transition-duration: 0.3s;
+    transition-duration: 0.1s;
 }
 
 .ballistics-content.open {
