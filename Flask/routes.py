@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 from math import ceil, floor
-import sqlite3
-
+import sqlite3, os
 
 easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"]
 
@@ -427,7 +426,8 @@ WHERE magazines.id = ?''', (id,))
 
 @app.route("/helmets")
 def all_helmets():
-    conn = sqlite3.connect('delta.db')
+    db_path = os.path.join(os.path.dirname(__file__), 'delta.db')
+    conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
     search_query = request.args.get('search', '')
@@ -439,7 +439,7 @@ def all_helmets():
     
     results = cur.fetchall()
     conn.close()
-    return render_template('helmets.html', params=results, title="Helmets", search=search_query)
+    return render_template('helmets.html', params=results, title="Helmets", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/helmet/<int:id>")
 def helmet(id):
