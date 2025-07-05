@@ -16,7 +16,11 @@ def home():
 
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
-    conn = sqlite3.connect('Flask/delta.db')
+    import os
+
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+    db_path = os.path.join(BASE_DIR, 'delta.db')
+    conn = sqlite3.connect(db_path)
     # assault rifles
     cur = conn.cursor()
 
