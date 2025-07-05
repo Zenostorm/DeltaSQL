@@ -8,6 +8,30 @@ easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"
 app = Flask(__name__)
 DATABASE = "delta.db"
 
+@app.route('/debug_db')
+def debug_db():
+    import os
+    db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'delta.db')
+    exists = os.path.exists(db_path)
+    size = os.path.getsize(db_path) if exists else 0
+
+    import sqlite3
+    try:
+        conn = sqlite3.connect(db_path)
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
+        tables = cur.fetchall()
+        conn.close()
+    except Exception as e:
+        return f"<b>Error connecting to DB:</b> {e}"
+
+    return f"""
+    <b>DB Path:</b> {db_path}<br>
+    <b>Exists:</b> {exists}<br>
+    <b>Size:</b> {size} bytes<br>
+    <b>Tables:</b> {tables}
+    """
+
 
 @app.route("/")
 def home():
@@ -16,7 +40,7 @@ def home():
 
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
-    conn = sqlite3.connect('/home/ZenoStorm/DeltaSQL/Flask/delta.db')
+    conn = sqlite3.connect('delta.db')
     # assault rifles
     cur = conn.cursor()
 
