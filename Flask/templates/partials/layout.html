@@ -22,11 +22,11 @@
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <li><a href="{{ url_for('weapons') }}">Weapons</a></li>
-                        <li><a href="http://127.0.0.1:5000/ammunition">Ammunition</a></li>
-                        <li><a href="http://127.0.0.1:5000/parts">Parts</a></li>
-                        <li><a href="http://127.0.0.1:5000/attachments">Attachments</a></li>
-                        <li><a href="http://127.0.0.1:5000/magazines">Magazines</a></li>
+                        <li><a href="{{ url_for('all_weapons') }}">Weapons</a></li>
+                        <li><a href="{{ url_for('ammunition') }}">Ammunition</a></li>
+                        <li><a href="{{ url_for('all_parts') }}">Parts</a></li>
+                        <li><a href="{{ url_for('all_attachments') }}">Attachments</a></li>
+                        <li><a href="{{ url_for('all_magazines') }}">Magazines</a></li>
                     </div>
                 </div>
 
@@ -36,9 +36,9 @@
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <li><a href="http://127.0.0.1:5000/helmets">Helmets</a></li>
-                        <li><a href="http://127.0.0.1:5000/visors">Visors</a></li>
-                        <li><a href="http://127.0.0.1:5000/rigs">Chest rigs</a></li>
+                        <li><a href="{{ url_for('all_helmets') }}">Helmets</a></li>
+                        <li><a href="{{ url_for('all_visors') }}">Visors</a></li>
+                        <li><a href="{{ url_for('all_rigs') }}">Chest rigs</a></li>
                     </div>
                 </div>
 
@@ -48,9 +48,9 @@
                         <i class="fa fa-caret-down"></i>
                     </button>
                     <div class="dropdown-content">
-                        <li><a href="http://127.0.0.1:5000/consumables">Consumables</a></li>
-                        <li><a href="http://127.0.0.1:5000/items">Junk</a></li>
-                        <li><a href="http://127.0.0.1:5000/containers">Lootable Containers</a></li>
+                        <li><a href="{{ url_for('all_consumables') }}">Consumables</a></li>
+                        <li><a href="{{ url_for('all_items') }}">Junk</a></li>
+                        <li><a href="{{ url_for('all_containers') }}">Lootable Containers</a></li>
                     </div>
                 </div>
 
