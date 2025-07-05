@@ -6,7 +6,7 @@ import sqlite3, os
 easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"]
 
 app = Flask(__name__)
-DATABASE = "flask/delta.db"
+DATABASE = "delta.db"
 
 
 @app.route("/")
@@ -16,7 +16,7 @@ def home():
 
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
-    conn = sqlite3.connect('delta.db')
+    conn = sqlite3.connect('Flask/delta.db')
     # assault rifles
     cur = conn.cursor()
 
