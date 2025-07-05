@@ -439,7 +439,7 @@ def all_helmets():
     
     results = cur.fetchall()
     conn.close()
-    return render_template('helmets.html', params=results, title="Helmets", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('helmets.html', params=results, title="Helmets", search=search_query)
 
 @app.route("/helmet/<int:id>")
 def helmet(id):
