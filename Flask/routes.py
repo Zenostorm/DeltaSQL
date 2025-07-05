@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 from math import ceil, floor
 import sqlite3, os
 
+
 easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"]
 
 app = Flask(__name__)
@@ -426,7 +427,7 @@ WHERE magazines.id = ?''', (id,))
 
 @app.route("/helmets")
 def all_helmets():
-    db_path = os.path.join(os.path.dirname(__file__), 'delta.db')
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "delta.db")
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
 
