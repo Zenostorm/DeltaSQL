@@ -16,11 +16,7 @@ def home():
 
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
-    import os
-
-    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    db_path = os.path.join(BASE_DIR, 'delta.db')
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect('/home/ZenoStorm/DeltaSQL/Flask/delta.db')
     # assault rifles
     cur = conn.cursor()
 
@@ -34,8 +30,6 @@ def all_weapons():
     assault_rifles = cur.fetchall()
 
     # submachine guns
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -46,8 +40,6 @@ def all_weapons():
     submachine_guns = cur.fetchall()
     
     # light machine guns
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -58,8 +50,6 @@ def all_weapons():
     light_machine_guns = cur.fetchall()
 
     # sniper rifles
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -70,8 +60,6 @@ def all_weapons():
     sniper_rifles = cur.fetchall()
 
     # assault carbines
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -82,8 +70,6 @@ def all_weapons():
     assault_carbines = cur.fetchall()
 
     # battle rifles
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -94,8 +80,6 @@ def all_weapons():
     battle_rifles = cur.fetchall()
 
     # shotguns
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -106,8 +90,6 @@ def all_weapons():
     shotguns = cur.fetchall()
 
     # pistols
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
@@ -118,8 +100,6 @@ def all_weapons():
     pistols = cur.fetchall()
 
     # rocket launchers
-    cur = conn.cursor()
-
     search_query = request.args.get('search', '')
 
     if search_query:
