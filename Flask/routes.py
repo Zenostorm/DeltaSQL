@@ -6,7 +6,7 @@ import sqlite3, os
 easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"]
 
 app = Flask(__name__)
-DATABASE = "delta.db"
+DATABASE = "flask/delta.db"
 
 
 @app.route("/")
@@ -427,8 +427,7 @@ WHERE magazines.id = ?''', (id,))
 
 @app.route("/helmets")
 def all_helmets():
-    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "delta.db")
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
     search_query = request.args.get('search', '')
