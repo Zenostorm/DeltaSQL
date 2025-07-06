@@ -350,7 +350,7 @@ def all_attachments():
     
     extras = cur.fetchall()
     conn.close()
-    return render_template('attachments.html', optics=optics, muzzles=muzzles, extras=extras, title="Parts", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('attachments.html', optics=optics, muzzles=muzzles, extras=extras, title="Attachments", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/attachment/<int:id>")
 def attachment(id):
