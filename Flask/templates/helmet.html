@@ -13,7 +13,7 @@
                     {% for attachment in attachments %}
                     <div class="link-row">
                         <img src="/static/images/gear/visors/{{attachment[2]}}" class="link-icon">
-                        <a href="http://127.0.0.1:5000/visor/{{attachment[0]}}">
+                        <a href="{{ url_for('visor', id=attachment[0]) }}">
                             <i class="fa-solid fa-caret-right"></i> {{attachment[1]}}
                         </a>
                     </div>

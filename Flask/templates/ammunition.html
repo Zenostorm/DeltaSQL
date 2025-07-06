@@ -15,7 +15,7 @@
 {% if params %}
 {% for ammo in params %}
 <div class="row">
-    <a href="/ammo/{{ammo[0]}}">
+    <a href="{{ url_for('ammo', id=ammo[0]) }}">
         <img src="/static/images/ballistics/ammunition/{{ammo[6]}}" class="icon">
     </a>
 

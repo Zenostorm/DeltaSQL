@@ -14,7 +14,7 @@
 {% if params %}
 {% for helmet in params %}
 <div class="row">
-    <a href="/helmet/{{helmet[0]}}">
+    <a href="{{ url_for('helmet', id=helmet[0]) }}">
         <img src="/static/images/gear/helmets/{{helmet[10]}}" class="icon">
     </a>
 

@@ -14,7 +14,7 @@
 <h2>Optics</h2>
 {% for optic in optics %}
 <div class="row">
-    <a href="/attachment/{{optic[0]}}">
+    <a href="{{ url_for('attachment', id=optic[0]) }}">
         <img src="/static/images/ballistics/attachments/{{optic[9]}}" class="icon">
     </a>
 
@@ -30,7 +30,7 @@
 <h2>Muzzle attachments</h2>
 {% for muzzle in muzzles %}
 <div class="row">
-    <a href="/attachment/{{muzzle[0]}}">
+    <a href="{{ url_for('attachment', id=muzzle[0]) }}">
         <img src="/static/images/ballistics/attachments/{{muzzle[9]}}" class="icon">
     </a>
 
@@ -46,7 +46,7 @@
 <h2>Extras</h2>
 {% for extra in extras %}
 <div class="row">
-    <a href="/attachment/{{extra[0]}}">
+    <a href="{{ url_for('attachment', id=extra[0]) }}">
         <img src="/static/images/ballistics/attachments/{{extra[9]}}" class="icon">
     </a>
 

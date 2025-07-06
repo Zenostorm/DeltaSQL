@@ -14,7 +14,7 @@
 <h2>Front Assemblies</h2>
 {% for front in fronts %}
 <div class="row">
-    <a href="/part/{{front[0]}}">
+    <a href="{{ url_for('part', id=front[0]) }}">
         <img src="/static/images/ballistics/parts/{{front[8]}}" class="icon">
     </a>
 
@@ -30,7 +30,7 @@
 <h2>Handles</h2>
 {% for handle in handles %}
 <div class="row">
-    <a href="/part/{{handle[0]}}">
+    <a href="{{ url_for('part', id=handle[0]) }}">
         <img src="/static/images/ballistics/parts/{{handle[8]}}" class="icon">
     </a>
 
@@ -46,7 +46,7 @@
 <h2>Stocks</h2>
 {% for stock in stocks %}
 <div class="row">
-    <a href="/part/{{stock[0]}}">
+    <a href="{{ url_for('part', id=stock[0]) }}">
         <img src="/static/images/ballistics/parts/{{stock[8]}}" class="icon">
     </a>
 

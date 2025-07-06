@@ -11,7 +11,7 @@
 {% if params %}
 {% for visor in params %}
 <div class="row">
-    <a href="/visor/{{visor[0]}}">
+    <a href="{{ url_for('visor', id=visor[0]) }}">
         <img src="/static/images/gear/visors/{{visor[9]}}" class="icon">
     </a>
 

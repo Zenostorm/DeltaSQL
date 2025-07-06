@@ -18,7 +18,7 @@
 <h2>Pistols</h2>
 {% for weapon in pistols %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -34,7 +34,7 @@
 <h2>Submachine Guns</h2>
 {% for weapon in submachine_guns %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -50,7 +50,7 @@
 <h2>Assault Carbines</h2>
 {% for weapon in assault_carbines %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -66,7 +66,7 @@
 <h2>Shotguns</h2>
 {% for weapon in shotguns %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -82,7 +82,7 @@
 <h2>Assault Rifles</h2>
 {% for weapon in assault_rifles %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -98,7 +98,7 @@
 <h2>Sniper Rifles</h2>
 {% for weapon in sniper_rifles %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -114,7 +114,7 @@
 <h2>Light Machine Guns</h2>
 {% for weapon in light_machine_guns %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 
@@ -130,7 +130,7 @@
 <h2>Rocket Launchers</h2>
 {% for weapon in rocket_launchers %}
 <div class="row">
-    <a href="/weapon/{{weapon[0]}}">
+    <a href="{{ url_for('weapon', id=weapon[0]) }}">
         <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
     </a>
 

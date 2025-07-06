@@ -14,7 +14,7 @@
 {% if params %}
 {% for rig in params %}
 <div class="row">
-    <a href="/rig/{{rig[0]}}">
+    <a href="{{ url_for('rig', id=rig[0]) }}">
         <img src="/static/images/gear/chest rigs/{{rig[11]}}" class="icon">
     </a>
 
