@@ -22,9 +22,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Rifle'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Rifle'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Rifle', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Rifle', ))
 
     assault_rifles = cur.fetchall()
 
@@ -32,9 +32,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Submachine Gun'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Submachine Gun'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Submachine Gun', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Submachine Gun', ))
 
     submachine_guns = cur.fetchall()
     
@@ -42,9 +42,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Light Machine Gun'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Light Machine Gun'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Light Machine Gun', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Light Machine Gun', ))
 
     light_machine_guns = cur.fetchall()
 
@@ -52,9 +52,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Sniper Rifle'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Sniper Rifle'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Sniper Rifle', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Sniper Rifle', ))
 
     sniper_rifles = cur.fetchall()
 
@@ -62,9 +62,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Carbine'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Assault Carbine'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Carbine', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Assault Carbine', ))
 
     assault_carbines = cur.fetchall()
 
@@ -72,9 +72,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Battle Rifle'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Battle Rifle'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Battle Rifle', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Battle Rifle', ))
 
     battle_rifles = cur.fetchall()
 
@@ -82,9 +82,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Shotgun'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Shotgun'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Shotgun', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Shotgun', ))
 
     shotguns = cur.fetchall()
 
@@ -92,9 +92,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Pistol'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Pistol'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Pistol', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Pistol', ))
 
     pistols = cur.fetchall()
 
@@ -102,9 +102,9 @@ def all_weapons():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Rocket Launcher'))
+        cur.execute("SELECT id, name, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY caliber_id", ('%' + search_query + '%', 'Rocket Launcher'))
     else:
-        cur.execute('SELECT * FROM weapons WHERE type = ? ORDER BY caliber_id', ('Rocket Launcher', ))
+        cur.execute('SELECT id, name, description, image FROM weapons WHERE type = ? ORDER BY caliber_id', ('Rocket Launcher', ))
 
     rocket_launchers = cur.fetchall()
     conn.close()

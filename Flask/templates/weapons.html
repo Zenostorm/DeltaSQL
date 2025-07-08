@@ -2,11 +2,11 @@
 {% block content %}
 <h2>Weapons</h2>
 <h4>
-    Weapons used to inflict damage on NPCs and other Wastelanders.
-    Every gun loads a specfic caliber, fed through compatible magazines, though some guns feature internal magazines.
-    All the weapons serve a unique purpose. Some are cheap and accessible, while others are built for combat.
-    Some effective in close quarters combat, some specialized in shooting at range,
-    while the most reliable weapons are versatile and proficient at all ranges.
+    Weapons are used to inflict damage, 
+    each loading a specific caliber via compatible or internal magazines. 
+    Every gun serves a unique purpose—some are cheap and accessible, 
+    others specialized for close quarters or long range, 
+    while the most reliable excel at all ranges.
 </h4>
 
 {% include 'partials/searchbar.html' %}
@@ -19,12 +19,12 @@
 {% for weapon in pistols %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -35,12 +35,12 @@
 {% for weapon in submachine_guns %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -51,12 +51,12 @@
 {% for weapon in assault_carbines %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -67,12 +67,12 @@
 {% for weapon in shotguns %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -83,12 +83,12 @@
 {% for weapon in assault_rifles %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -99,12 +99,12 @@
 {% for weapon in sniper_rifles %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -115,12 +115,12 @@
 {% for weapon in light_machine_guns %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
@@ -131,12 +131,12 @@
 {% for weapon in rocket_launchers %}
 <div class="row">
     <a href="{{ url_for('weapon', id=weapon[0]) }}">
-        <img src="/static/images/ballistics/weapons/{{weapon[8]}}" class="icon">
+        <img src="/static/images/ballistics/weapons/{{weapon[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{weapon[1]}}</h3>
-        <h5>{{weapon[7]}}</h5>
+        <h5>{{weapon[2]}}</h5>
     </div>
 </div>
 {% endfor %}
