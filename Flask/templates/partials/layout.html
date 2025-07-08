@@ -12,51 +12,6 @@
     <div class="page">
         <header>{% include 'partials/header.html' %}</header>
 
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-
-                <div class="dropdown">
-                    <button class="dropbtn">
-                        Ballistics
-                        <i class="fa fa-caret-down"></i>
-                    </button>
-                    <div class="dropdown-content">
-                        <li><a href="{{ url_for('all_weapons') }}">Weapons</a></li>
-                        <li><a href="{{ url_for('ammunition') }}">Ammunition</a></li>
-                        <li><a href="{{ url_for('all_parts') }}">Parts</a></li>
-                        <li><a href="{{ url_for('all_attachments') }}">Attachments</a></li>
-                        <li><a href="{{ url_for('all_magazines') }}">Magazines</a></li>
-                    </div>
-                </div>
-
-                <div class="dropdown">
-                    <button class="dropbtn">
-                        Gear
-                        <i class="fa fa-caret-down"></i>
-                    </button>
-                    <div class="dropdown-content">
-                        <li><a href="{{ url_for('all_helmets') }}">Helmets</a></li>
-                        <li><a href="{{ url_for('all_visors') }}">Visors</a></li>
-                        <li><a href="{{ url_for('all_rigs') }}">Chest rigs</a></li>
-                    </div>
-                </div>
-
-                <div class="dropdown">
-                    <button class="dropbtn">
-                        Items
-                        <i class="fa fa-caret-down"></i>
-                    </button>
-                    <div class="dropdown-content">
-                        <li><a href="{{ url_for('all_consumables') }}">Consumables</a></li>
-                        <li><a href="{{ url_for('all_items') }}">Junk</a></li>
-                        <li><a href="{{ url_for('all_containers') }}">Lootable Containers</a></li>
-                    </div>
-                </div>
-
-              </ul>
-        </nav>
-
         <main>{% block content %}{% endblock %}</main>
         <hr>
         <h4>
@@ -64,9 +19,8 @@
             <a href="https://www.youtube.com/@soltergames"><i class="fa-brands fa-youtube"></i></a>
             <a href="https://www.tiktok.com/@vikings_studio?lang=en"><i class="fa-brands fa-tiktok"></i></a>
             Join the community
+            <span class="copyright">&copy;Solter</span>
         </h4>
-
-        <footer>&copy;Solter</footer>
     </body>
     </div>
 </html>

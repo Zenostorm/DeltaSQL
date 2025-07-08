@@ -17,6 +17,9 @@ body {
 
 .page {
     background-color: #efefef;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 90vh;
     margin-top: 2vw;
     margin-left: 10vw;
     margin-right: 10vw;
@@ -31,17 +34,13 @@ body {
 }
 
 /**FOOTER STYLES**/
-footer {
-    position: fixed;
-    font-family: "bungee";
-    margin: 0;
-    margin-left: 1vw;
-    font-size: 1vw;
-    width: 100%;
+.copyright {
+    display: inline;
+    float: right;
 }
 
 hr {
-    margin: 0 3vw 1vw 3vw;
+    margin: auto 3vw 1vw 3vw;
     height: 0.2vw;
     background-color: black;
 }

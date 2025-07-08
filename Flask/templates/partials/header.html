@@ -6,3 +6,48 @@
     <h1>Project Delta <span class="purple">Database</span></h1>
 
 </div>
+
+<nav>
+            <ul>
+                <li><a href="{{ url_for('home') }}">Home</a></li>
+
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        Ballistics
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <li><a href="{{ url_for('all_weapons') }}">Weapons</a></li>
+                        <li><a href="{{ url_for('ammunition') }}">Ammunition</a></li>
+                        <li><a href="{{ url_for('all_parts') }}">Parts</a></li>
+                        <li><a href="{{ url_for('all_attachments') }}">Attachments</a></li>
+                        <li><a href="{{ url_for('all_magazines') }}">Magazines</a></li>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        Gear
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <li><a href="{{ url_for('all_helmets') }}">Helmets</a></li>
+                        <li><a href="{{ url_for('all_visors') }}">Visors</a></li>
+                        <li><a href="{{ url_for('all_rigs') }}">Chest rigs</a></li>
+                    </div>
+                </div>
+
+                <div class="dropdown">
+                    <button class="dropbtn">
+                        Items
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <li><a href="{{ url_for('all_consumables') }}">Consumables</a></li>
+                        <li><a href="{{ url_for('all_items') }}">Junk</a></li>
+                        <li><a href="{{ url_for('all_containers') }}">Lootable Containers</a></li>
+                    </div>
+                </div>
+
+              </ul>
+        </nav>
