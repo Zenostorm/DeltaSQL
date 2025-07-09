@@ -2,10 +2,10 @@
 {% block content %}
 <h2>Junk</h2>
 <h4>
-    Junk items that are found throughout the wasteland, the most common form of loot. 
-    Despite being classified as junk, the value and rarity of junk items vary wildly. 
-    Most junk can be sold off to traders to earn quick rubles, 
-    while rarer and more valuable items are regularly used to barter for exclusive equipment at different traders.
+    Junk items are the most common form of loot found throughout the wasteland, 
+    with value and rarity that vary widely. 
+    While most can be sold for quick rubles, 
+    while rarer pieces are often used to barter for exclusive gear.
 </h4>
 
 {% include 'partials/searchbar.html' %}
@@ -15,12 +15,12 @@
 {% for item in params %}
 <div class="row">
     <a>
-        <img src="/static/images/items/junk/{{item[7]}}" class="icon">
+        <img src="/static/images/items/junk/{{item[3]}}" class="icon">
     </a>
 
     <div>
         <h3>{{item[1]}}</h3>
-        <h5>{{item[6]}}</h5>
+        <h5>{{item[2]}}</h5>
     </div>
 </div>
 {% endfor %}

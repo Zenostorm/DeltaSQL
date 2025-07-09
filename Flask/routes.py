@@ -469,7 +469,7 @@ def all_rigs():
 
     results = cur.fetchall()
     conn.close()
-    return render_template('rigs.html', params=results, title="Chest rigs", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('rigs.html', params=results, title="Rigs", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/rig/<int:id>")
 def rig(id):
@@ -599,12 +599,12 @@ def all_items():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT * FROM junk WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%'))
+       cur.execute("SELECT id, name, description, image FROM junk WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
-        cur.execute("SELECT * FROM junk ORDER BY id")
+        cur.execute("SELECT id, name, description, image FROM junk ORDER BY id")
     results = cur.fetchall()
     conn.close()
-    return render_template('items.html', params=results, title="Junk", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('items.html', params=results, title="Items", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/containers")
 def all_containers():
