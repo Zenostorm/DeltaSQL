@@ -11,6 +11,7 @@ body {
 .header {
     display: flex;
     margin: 0px;
+    max-width: 80vw;
     background-color: #200E30;
     font-family: 'Bungee';
 }
@@ -20,16 +21,14 @@ body {
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 90vh;
-    margin-top: 2vw;
-    margin-left: 10vw;
-    margin-right: 10vw;
-    margin-bottom: 2vw;
+    min-width: 80vw;
+    margin: 2vh 10vw 2vh 10vw;
     padding-bottom: 2vw;
 }
 
 /**HEADER LOGO**/
 .logo {
-    width: 6vw;
+    width: 5vw;
     margin: 1vw 0vw 1vw 2vw;
 }
 
@@ -68,16 +67,16 @@ iframe {
     width: 70vw;
     height: 40vw;
     border-radius: 2vw;
-    margin: 0 4vw 2vw 4vw;
+    margin: 0 auto 2vw 4vw;
 }
 
 /**NAVBAR STYLES**/
 nav {
     color: white;
+    box-sizing: border-box;
+    max-width: 80vw;
     background-color: #32164b;
-    padding-left: 1.5vw;
-    padding-top: 0.5vw;
-    padding-bottom: 0.5vw;
+    padding: 0.25vw 0 0.25vw 1.5vw;
 }
 
 ul {
@@ -94,7 +93,7 @@ li {
 li a {
   display: block;
   color: white;
-  font-size: 1.5vw;
+  font-size: 1.75vw;
   text-align: center;
   margin-right: 4vw;
   text-decoration: none;
@@ -114,8 +113,8 @@ li a:hover {
 .dropdown .dropbtn {
     display: block;
     color: white;
-    font-size: 1.5vw;
-    padding-right: 4vw;
+    font-size: 1.75vw;
+    margin-right: 4vw;
     text-align: center;
     text-decoration: none;
     transition-duration: 0.3s;
@@ -211,6 +210,7 @@ form button:hover {
     height: 10vw;
     padding: 1vw;
     background-color: #212228;
+    filter: brightness(1.75);
 }
 
 /**TEXT STYLES**/
