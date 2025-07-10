@@ -210,7 +210,7 @@ form button:hover {
     height: 10vw;
     padding: 1vw;
     background-color: #212228;
-    filter: brightness(1.75);
+    filter: brightness(1.5);
 }
 
 /**TEXT STYLES**/

@@ -1,0 +1,57 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<h2>Keys and Keycards</h2>
+<h4>
+    Keys and keycards grant access to the locked doors located in the wasteland. 
+    Each locked door only accepts a specific key. 
+    However, the loot contained within locked rooms is usually much more valuable. 
+</h4>
+
+{% include 'partials/searchbar.html' %}
+
+{% set is_easter_egg = search and search|lower in easter_egg_queries %}
+{% if keys or cards %}
+<!-- Keys sub-category -->
+{% if keys %}
+<h2>Keys</h2>
+{% for key in keys %}
+<div class="row">
+    <a>
+        <img src="/static/images/items/keys/{{key[4]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{key[1]}}</h3>
+        <h5>{{key[3]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Keycards sub-category -->
+{% if cards %}
+<h2>Keycards</h2>
+{% for card in cards %}
+<div class="row">
+    <a>
+        <img src="/static/images/items/keys/{{card[4]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{card[1]}}</h3>
+        <h5>{{card[3]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% elif not is_easter_egg %}
+<div class="row">
+    <img src="/static/images/error.png" class="icon">
+
+    <div>
+        <h3>No results found</h3>
+        <h5>Try another search, or maybe stop trying to break my database.</h5>
+    </div>
+</div>
+{% endif %}
+{% include 'partials/easter_eggs.html' %}
+{% endblock %}

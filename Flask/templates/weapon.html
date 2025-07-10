@@ -21,6 +21,20 @@
                 {% endfor %}
             </h5>
             {% endif %}
+            <!-- Muzzles list -->
+            {% if muzzles %}
+            <h3>Muzzle attachments</h3>
+            <h5>
+                {% for muzzle in muzzles %}
+                <div class="link-row">
+                    <img src="/static/images/ballistics/attachments/{{muzzle[2]}}" class="link-icon">
+                    <a href="{{ url_for('attachment', id=muzzle[0]) }}">
+                        <i class="fa-solid fa-caret-right"></i> {{muzzle[1]}}
+                    </a>
+                </div>
+                {% endfor %}
+            </h5>
+            {% endif %}
             <!-- Extras list -->
             {% if extras %}
             <h3>Extras</h3>
