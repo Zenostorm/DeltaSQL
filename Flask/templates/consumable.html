@@ -1,0 +1,46 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<div class="topic">
+    <div>
+        <h3>{{consumable[1]}}</h3>
+        <h5>{{consumable[10]}}</h5>
+    </div>
+
+
+        <div class="topic-box">
+            <img src="/static/images/items/consumables/{{consumable[11]}}" class="topic-icon">
+            <h6 class="topic-row">Type <br> <span class="lighter">{{consumable[2]}}</span></h6>
+
+            <!-- show rows if type is food or drink -->
+            {% if consumable[2] == "Food" or consumable[2] == "Drink" %}
+            <h6 class="topic-row">Calories <br> <span class="lighter">{{consumable[3]}}</span></h6>
+            <h6 class="topic-row">Hydration <br> <span class="lighter">{{consumable[4]}}</span></h6>
+            <h6 class="topic-row">Healing <br> <span class="lighter">{{consumable[5]}}</span></h6>
+            {% endif %}
+
+            <!-- show rows if type is medical -->
+            {% if consumable[2] == "Medical" %}
+            <h6 class="topic-row">Healing <br> <span class="lighter">{{consumable[5]}}</span></h6>
+            <h6 class="topic-row">Radiation <br> <span class="lighter">{{consumable[6]}}</span></h6>
+            <h6 class="topic-row">Bleeding <br> <span class="lighter">{{consumable[7]}}</span></h6>
+            {% endif %}
+
+            <!-- show rows if type is stim -->
+            {% if consumable[2] == "Stim" %}
+            <h6 class="topic-row">Calories <br> <span class="lighter">{{consumable[3]}}</span></h6>
+            <h6 class="topic-row">Hydration <br> <span class="lighter">{{consumable[4]}}</span></h6>
+            <h6 class="topic-row">Healing <br> <span class="lighter">{{consumable[5]}}</span></h6>
+            <h6 class="topic-row">Radiation <br> <span class="lighter">{{consumable[6]}}</span></h6>
+            <h6 class="topic-row">Bleeding <br> <span class="lighter">{{consumable[7]}}</span></h6>
+            {% endif %}
+
+            <!-- show durability if more than 0 -->
+            {% if consumable[8] > 0 %}
+            <h6 class="topic-row">Durability <br> <span class="lighter">{{consumable[8]}}</span></h6>
+            {% endif %}
+
+            <h6 class="topic-row">Stack limit <br> <span class="lighter">{{consumable[9]}}</span></h6>
+        </div>
+</div>
+
+{% endblock %}

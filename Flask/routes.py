@@ -597,6 +597,16 @@ def all_consumables():
     conn.close()
     return render_template('consumables.html', foods=foods, drinks=drinks, medicals=medicals, stims=stims, title="Consumables", search=search_query, easter_egg_queries=easter_egg_queries)
 
+@app.route("/consumable/<int:id>")
+def consumable(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM consumables WHERE id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    conn.close()
+    return render_template('consumable.html', consumable=results, title=results[1])
+
 @app.route("/items")
 def all_items():
     conn = sqlite3.connect('delta.db')
@@ -611,6 +621,16 @@ def all_items():
     results = cur.fetchall()
     conn.close()
     return render_template('items.html', params=results, title="Items", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/item/<int:id>")
+def item(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM junk WHERE id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    conn.close()
+    return render_template('item.html', item=results, title=results[1])
 
 @app.route("/containers")
 def all_containers():

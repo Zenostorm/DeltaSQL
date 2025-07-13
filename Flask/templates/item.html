@@ -1,0 +1,16 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<div class="topic">
+    <div>
+        <h3>{{item[1]}}</h3>
+        <h5>{{item[3]}}</h5>
+    </div>
+
+
+        <div class="topic-box">
+            <img src="/static/images/items/junk/{{item[4]}}" class="topic-icon">
+            <h6 class="topic-row">Stack limit <br> <span class="lighter">{{item[2]}}</span></h6>
+        </div>
+</div>
+
+{% endblock %}

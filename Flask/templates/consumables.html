@@ -18,7 +18,7 @@
 <h2>Food</h2>
 {% for food in foods %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('consumable', id=food[0]) }}">
         <img src="/static/images/items/consumables/{{food[11]}}" class="icon">
     </a>
 
@@ -34,7 +34,7 @@
 <h2>Drink</h2>
 {% for drink in drinks %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('consumable', id=drink[0]) }}">
         <img src="/static/images/items/consumables/{{drink[11]}}" class="icon">
     </a>
 
@@ -50,7 +50,7 @@
 <h2>Medical</h2>
 {% for medical in medicals %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('consumable', id=medical[0]) }}">
         <img src="/static/images/items/consumables/{{medical[11]}}" class="icon">
     </a>
 
@@ -61,12 +61,12 @@
 </div>
 {% endfor %}
 {% endif %}
-<!-- Medical sub-category -->
+<!-- Stims sub-category -->
 {% if stims %}
 <h2>Stims</h2>
 {% for stim in stims %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('consumable', id=stim[0]) }}">
         <img src="/static/images/items/consumables/{{stim[11]}}" class="icon">
     </a>
 
