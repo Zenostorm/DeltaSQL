@@ -175,9 +175,9 @@ def ammunition():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT * FROM ammunition WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM ammunition WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
-        cur.execute('SELECT * FROM ammunition ORDER BY id')
+        cur.execute('SELECT id, name, description, image FROM ammunition ORDER BY id')
 
     results = cur.fetchall()
     conn.close()

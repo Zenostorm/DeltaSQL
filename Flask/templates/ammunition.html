@@ -15,12 +15,12 @@
 {% for ammo in params %}
 <div class="row">
     <a href="{{ url_for('ammo', id=ammo[0]) }}">
-        <img src="/static/images/ballistics/ammunition/{{ammo[6]}}" class="icon">
+        <img src="/static/images/ballistics/ammunition/{{ammo[3]}}" class="icon">
     </a>
 
     <div>
-        <h3>{{ammo[2]}}</h3>
-        <h5>{{ammo[7]}}</h5>
+        <h3>{{ammo[1]}}</h3>
+        <h5>{{ammo[2]}}</h5>
     </div>
 </div>
 {% endfor %}
