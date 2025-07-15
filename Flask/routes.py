@@ -133,8 +133,7 @@ def weapon(id):
     weapons.RPM,
     weapons.durability,
     weapons.description,
-    weapons.image,
-    weapons.long_desc
+    weapons.image
 FROM weapons
 JOIN calibers ON weapons.caliber_id = calibers.id
 WHERE weapons.id = ?''', (id,))
@@ -550,6 +549,22 @@ def visor(id):
 
     conn.close()
     return render_template('visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
+
+@app.route("/clothes")
+def all_clothes():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM clothes WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT id, name, description, image FROM clothes ORDER BY id')
+
+    results = cur.fetchall()
+    conn.close()
+    return render_template('rigs.html', params=results, title="Rigs", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/consumables")
 def all_consumables():
