@@ -550,21 +550,38 @@ def visor(id):
     conn.close()
     return render_template('visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
-@app.route("/clothes")
-def all_clothes():
+@app.route("/leg armor")
+def all_leg_armor():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT id, name, description, image FROM clothes WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM leg_armor WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
-        cur.execute('SELECT id, name, description, image FROM clothes ORDER BY id')
+        cur.execute('SELECT id, name, description, image FROM leg_armor ORDER BY id')
 
     results = cur.fetchall()
     conn.close()
-    return render_template('rigs.html', params=results, title="Rigs", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('leg_armors.html', params=results, title="Leg Armor", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/wearables")
+def all_wearables():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    # fetch shirts
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%',))
+    else:
+        cur.execute('SELECT id, name, description, image FROM wearables ORDER BY id')
+
+    shirts = cur.fetchall()
+    conn.close()
+    return render_template('wearables.html', shirts=shirts, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/consumables")
 def all_consumables():
