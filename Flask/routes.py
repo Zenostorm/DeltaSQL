@@ -575,13 +575,53 @@ def all_wearables():
     search_query = request.args.get('search', '')
 
     if search_query:
-        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', "Shirt"))
     else:
-        cur.execute('SELECT id, name, description, image FROM wearables ORDER BY id')
+        cur.execute('SELECT id, name, description, image FROM wearables WHERE type = ? ORDER BY id', ("Shirt",))
 
     shirts = cur.fetchall()
+
+    # fetch pants
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', "Pants"))
+    else:
+        cur.execute('SELECT id, name, description, image FROM wearables WHERE type = ? ORDER BY id', ("Pants",))
+
+    pants = cur.fetchall()
+
+    # fetch masks
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', "Mask"))
+    else:
+        cur.execute('SELECT id, name, description, image FROM wearables WHERE type = ? ORDER BY id', ("Mask",))
+
+    masks = cur.fetchall()
+
+    # fetch gloves
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', "Gloves"))
+    else:
+        cur.execute('SELECT id, name, description, image FROM wearables WHERE type = ? ORDER BY id', ("Gloves",))
+
+    gloves = cur.fetchall()
+
+    # fetch backpacks
+    search_query = request.args.get('search', '')
+
+    if search_query:
+        cur.execute("SELECT id, name, description, image FROM wearables WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', "Backpack"))
+    else:
+        cur.execute('SELECT id, name, description, image FROM wearables WHERE type = ? ORDER BY id', ("Backpack",))
+
+    backpacks = cur.fetchall()
     conn.close()
-    return render_template('wearables.html', shirts=shirts, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('wearables.html', shirts=shirts, pants=pants, masks=masks, backpacks=backpacks, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/consumables")
 def all_consumables():

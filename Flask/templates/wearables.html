@@ -8,19 +8,87 @@
 {% include 'partials/searchbar.html' %}
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
-{% if params %}
-{% for wearable in params %}
+{% if shirts or pants or masks or gloves or backpacks %}
+<!-- Shirts -->
+{% if shirts %}
+<h2>Shirts</h2>
+{% for shirt in shirts %}
 <div class="row">
     <a>
-        <img src="/static/images/gear/wearables/{{wearable[3]}}" class="icon">
+        <img src="/static/images/gear/wearables/{{shirt[3]}}" class="icon">
     </a>
 
     <div>
-        <h3>{{wearable[1]}}</h3>
-        <h5>{{wearable[2]}}</h5>
+        <h3>{{shirt[1]}}</h3>
+        <h5>{{shirt[2]}}</h5>
     </div>
 </div>
 {% endfor %}
+{% endif %}
+<!-- Pants -->
+{% if pants %}
+<h2>Pants</h2>
+{% for pant in pants %}
+<div class="row">
+    <a>
+        <img src="/static/images/gear/wearables/{{pant[3]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{pant[1]}}</h3>
+        <h5>{{pant[2]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Masks -->
+{% if masks %}
+<h2>Masks</h2>
+{% for mask in masks %}
+<div class="row">
+    <a>
+        <img src="/static/images/gear/wearables/{{mask[3]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{mask[1]}}</h3>
+        <h5>{{mask[2]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Gloves -->
+{% if gloves %}
+<h2>Gloves</h2>
+{% for glove in glove %}
+<div class="row">
+    <a>
+        <img src="/static/images/gear/wearables/{{glove[3]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{glove[1]}}</h3>
+        <h5>{{glove[2]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+<!-- Backpacks -->
+{% if backpacks %}
+<h2>Backpacks</h2>
+{% for backpack in backpacks %}
+<div class="row">
+    <a>
+        <img src="/static/images/gear/wearables/{{backpack[3]}}" class="icon">
+    </a>
+
+    <div>
+        <h3>{{backpack[1]}}</h3>
+        <h5>{{backpack[2]}}</h5>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
 {% elif not is_easter_egg %}
 <div class="row">
     <img src="/static/images/error.png" class="icon">
