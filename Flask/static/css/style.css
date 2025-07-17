@@ -363,6 +363,10 @@ a h6:hover {
     border-radius: 1vw;
 }
 
+.link-row a {
+    margin-left: 0.5vw;
+}
+
 .link-icon {
     width: 2vw;
     height: 2vw;
