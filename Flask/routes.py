@@ -449,7 +449,7 @@ def helmet(id):
     cur.execute('SELECT damage, penetration, name, image FROM ammunition')
     ammunition = cur.fetchall()
 
-    # damage function
+    # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
@@ -492,7 +492,7 @@ def rig(id):
     cur.execute('SELECT damage, penetration, name, image FROM ammunition')
     ammunition = cur.fetchall()
 
-    # damage function
+    # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
@@ -534,12 +534,12 @@ def visor(id):
                 SELECT helmet_id FROM helmet_attachments where visor_id = ?)''', (id,))
     attachments = cur.fetchall()
 
-        # pull damage and piercing from ammunition
+    # pull damage and piercing from ammunition
     cur = conn.cursor()
     cur.execute('SELECT damage, penetration, name, image FROM ammunition')
     ammunition = cur.fetchall()
 
-    # damage function
+    # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
