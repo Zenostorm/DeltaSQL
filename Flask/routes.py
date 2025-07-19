@@ -621,7 +621,7 @@ def all_wearables():
 
     backpacks = cur.fetchall()
     conn.close()
-    return render_template('wearables.html', shirts=shirts, pants=pants, masks=masks, backpacks=backpacks, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
+    return render_template('wearables.html', shirts=shirts, pants=pants, masks=masks, gloves=gloves, backpacks=backpacks, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
 
 @app.route("/consumables")
 def all_consumables():
