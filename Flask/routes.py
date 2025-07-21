@@ -623,6 +623,16 @@ def all_wearables():
     conn.close()
     return render_template('wearables.html', shirts=shirts, pants=pants, masks=masks, gloves=gloves, backpacks=backpacks, title="Wearables", search=search_query, easter_egg_queries=easter_egg_queries)
 
+@app.route("/wearable/<int:id>")
+def wearable(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM wearables WHERE id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    conn.close()
+    return render_template('wearable.html', wearable=results, title=results[1])
+
 @app.route("/consumables")
 def all_consumables():
     conn = sqlite3.connect('delta.db')

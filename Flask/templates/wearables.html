@@ -14,7 +14,7 @@
 <h2>Shirts</h2>
 {% for shirt in shirts %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('wearable', id=shirt[0]) }}">
         <img src="/static/images/gear/wearables/{{shirt[3]}}" class="icon">
     </a>
 
@@ -30,7 +30,7 @@
 <h2>Pants</h2>
 {% for pant in pants %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('wearable', id=pant[0]) }}">
         <img src="/static/images/gear/wearables/{{pant[3]}}" class="icon">
     </a>
 
@@ -46,7 +46,7 @@
 <h2>Masks</h2>
 {% for mask in masks %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('wearable', id=mask[0]) }}">
         <img src="/static/images/gear/wearables/{{mask[3]}}" class="icon">
     </a>
 
@@ -62,7 +62,7 @@
 <h2>Gloves</h2>
 {% for glove in gloves %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('wearable', id=glove[0]) }}">
         <img src="/static/images/gear/wearables/{{glove[3]}}" class="icon">
     </a>
 
@@ -78,7 +78,7 @@
 <h2>Backpacks</h2>
 {% for backpack in backpacks %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('wearable', id=backpack[0]) }}">
         <img src="/static/images/gear/wearables/{{backpack[3]}}" class="icon">
     </a>
 
