@@ -2,9 +2,9 @@
 {% block content %}
 <h2>Leg Armor</h2>
 <h4>
-    Leg armor protects your legs. 
-    If you don't have legs, you can buy them on Temu or a second-leg store. 
-    What the hell is this description?
+    Leg armor protects your upper and lower legs from explosions and shrapnel. 
+    Leg armor isn't completely neccessary, 
+    although useful in some situations it may not be enough to justify the mobility penalty that comes with leg armor.
 </h4>
 
 {% include 'partials/searchbar.html' %}
@@ -13,7 +13,7 @@
 {% if params %}
 {% for armor in params %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('leg_armor', id=armor[0]) }}">
         <img src="/static/images/gear/leg armor/{{armor[3]}}" class="icon">
     </a>
 

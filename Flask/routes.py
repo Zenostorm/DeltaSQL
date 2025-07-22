@@ -3,7 +3,7 @@ from math import ceil, floor
 import sqlite3, os
 
 
-easter_egg_queries = ["contributors", "zeno", "pokubit", "immured", "aa battery"]
+easter_egg_queries = ["contributors"]
 
 app = Flask(__name__)
 DATABASE = "delta.db"
@@ -454,7 +454,7 @@ def helmet(id):
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
         else:
-            ballistics[ammunition[num][2]] = 2 * ammunition[num][0], ammunition[num][3], ceil(50 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0])
         num += 1
 
     conn.close()
@@ -497,7 +497,7 @@ def rig(id):
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
         else:
-            ballistics[ammunition[num][2]] = ammunition[num][0], ammunition[num][3], ceil(100 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0])
         num += 1
 
     conn.close()
@@ -544,13 +544,13 @@ def visor(id):
         if ammunition[num][1] < results[4]:
             ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
         else:
-            ballistics[ammunition[num][2]] = 2 * ammunition[num][0], ammunition[num][3], ceil(50 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0])
         num += 1
 
     conn.close()
     return render_template('visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
-@app.route("/leg armor")
+@app.route("/leg armors")
 def all_leg_armor():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
@@ -565,6 +565,33 @@ def all_leg_armor():
     results = cur.fetchall()
     conn.close()
     return render_template('leg_armors.html', params=results, title="Leg Armor", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/leg armor/<int:id>")
+def leg_armor(id):
+    ballistics = {}
+    num = 0
+
+    conn = sqlite3.connect('delta.db')
+    # pull leg armor data
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM leg_armor WHERE leg_armor.id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    # pull damage and piercing from ammunition
+    cur = conn.cursor()
+    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    ammunition = cur.fetchall()
+
+    # calculate damage and add to a dictionary
+    for ammo in ammunition:
+        if ammunition[num][1] < results[4]:
+            ballistics[ammunition[num][2]] = floor(0.25 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
+        else:
+            ballistics[ammunition[num][2]] = int(0.25 * ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0])
+        num += 1
+
+    conn.close()
+    return render_template('leg_armor.html', armor=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/wearables")
 def all_wearables():
@@ -752,6 +779,16 @@ def all_keys():
 
     conn.close()
     return render_template('keys.html', keys=keys, cards=cards, title="Keys", search=search_query, easter_egg_queries=easter_egg_queries)
+
+@app.route("/key/<int:id>")
+def key(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute('''SELECT * FROM keys WHERE id = ?''', (id,))
+    results = cur.fetchall()[0]
+
+    conn.close()
+    return render_template('key.html', key=results, title=results[1])
 
 if __name__ == '__main__':
     app.run(debug=True)

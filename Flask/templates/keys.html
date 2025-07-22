@@ -16,7 +16,7 @@
 <h2>Keys</h2>
 {% for key in keys %}
 <div class="row">
-    <a>
+    <a href="{{ url_for('key', id=key[0]) }}">
         <img src="/static/images/items/keys/{{key[4]}}" class="icon">
     </a>
 
