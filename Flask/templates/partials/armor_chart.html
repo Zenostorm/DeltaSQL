@@ -5,7 +5,7 @@
             {% for name, value in ballistics.items() %}
             <div class="ballistics-row">
                 <img src="/static/images/ballistics/ammunition/{{ value [1] }}" class="ballistics-icon">
-                <a>{{ name }}</a>
+                <a href="{{ url_for('ammo', id=value[3]) }}">{{ name }}</a>
                 <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
             </div>
             {% endfor %}

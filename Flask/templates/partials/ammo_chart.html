@@ -5,7 +5,7 @@
             {% for name, value in helmet_ballistics.items() %}
             <div class="ballistics-row">
                 <img src="/static/images/gear/helmets/{{ value [1] }}" class="ballistics-icon">
-                <a>{{ name }}</a>
+                <a href="{{ url_for('helmet', id=value[3]) }}">{{ name }}</a>
                 <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
             </div>
             {% endfor %}
@@ -20,7 +20,7 @@
             {% for name, value in visor_ballistics.items() %}
             <div class="ballistics-row">
                 <img src="/static/images/gear/visors/{{ value [1] }}" class="ballistics-icon">
-                <a>{{ name }}</a>
+                <a href="{{ url_for('visor', id=value[3]) }}">{{ name }}</a>
                 <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
             </div>
             {% endfor %}
@@ -35,7 +35,7 @@
             {% for name, value in rig_ballistics.items() %}
             <div class="ballistics-row">
                 <img src="/static/images/gear/chest rigs/{{ value [1] }}" class="ballistics-icon">
-                <a>{{ name }}</a>
+                <a href="{{ url_for('rig', id=value[3]) }}">{{ name }}</a>
                 <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
             </div>
             {% endfor %}

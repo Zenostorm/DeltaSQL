@@ -74,6 +74,12 @@
             <a href="http://127.0.0.1:5000/ammunition?search={{weapon[3]}}">
                 <h6 class="topic-row">Caliber <br> <span class="lighter"><i class="fa-solid fa-caret-right"></i> {{weapon[3]}}</span></h6>
             </a>
+
+            <!-- show damage multi for weapons with unique multipliers -->
+            {% if weapon[9] != 0 %}
+            <h6 class="topic-row">Damage multiplier <br> <span class="lighter">{{weapon[9]}}</span></h6>
+            {% endif %}
+
             <h6 class="topic-row">Firemode <br> <span class="lighter">{{weapon[4]}}</span></h6>
             <h6 class="topic-row">RPM <br> <span class="lighter">{{weapon[5]}}</span></h6>
             <h6 class="topic-row">Durability <br> <span class="lighter">{{weapon[6]}}</span></h6>

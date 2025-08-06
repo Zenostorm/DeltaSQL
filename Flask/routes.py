@@ -54,38 +54,35 @@ def weapon(id):
     weapons.RPM,
     weapons.durability,
     weapons.description,
-    weapons.image
+    weapons.image,
+    weapons.dmg_mult
 FROM weapons
 JOIN calibers ON weapons.caliber_id = calibers.id
 WHERE weapons.id = ?''', (id,))
     results = cur.fetchall()[0]
 
     # fetch optics
-    cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments WHERE weapon_id = ?) AND type = ?''', (id, "Optic"))
     optics = cur.fetchall()
 
     # fetch muzzles
-    cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Muzzle"))
     muzzles = cur.fetchall()
     
     # fetch extras
-    cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Extra"))
     extras = cur.fetchall()
 
     # fetch magazines
-    cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM magazines WHERE id IN (
                 SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
     magazines = cur.fetchall()
 
     conn.close()
-    return render_template('weapon.html', weapon=results, optics=optics, muzzles=muzzles, extras=extras, magazines=magazines, title=results[1])
+    return render_template('detail/weapon.html', weapon=results, optics=optics, muzzles=muzzles, extras=extras, magazines=magazines, title=results[1])
  
 @app.route("/ammunition")
 def ammunition():
@@ -138,29 +135,31 @@ JOIN calibers ON ammunition.caliber_id = calibers.id
 WHERE ammunition.id = ?''', (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
     cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
                 SELECT weapon_id FROM weapon_ammo where ammo_id = ?)''', (id,))
     weapons = cur.fetchall()
 
     # pull protection from helmets
     cur = conn.cursor()
-    cur.execute('SELECT ballistic, name, image FROM helmets')
+    cur.execute('SELECT ballistic, name, image, id FROM helmets')
     helmets = cur.fetchall()
+    helmet_ballistics = {}
+    visor_ballistics = {}
+    rig_ballistics = {}
 
     # helmet damage function
     num = 0
     print(results[4])
     for helmet in helmets:
         if results[5] < helmets[num][0]:
-            helmet_ballistics[helmets[num][1]] = floor(2 * results[4] * results[5] / helmets[num][0]), helmets[num][2], ceil(50 / floor(results[4] * results[5] / helmets[num][0]))
+            helmet_ballistics[helmets[num][1]] = floor(2 * results[4] * results[5] / helmets[num][0]), helmets[num][2], ceil(50 / floor(results[4] * results[5] / helmets[num][0])), helmets[num][3]
         else:
-            helmet_ballistics[helmets[num][1]] = 2 * results[4], helmets[num][2], ceil(50 / (results[4]))
+            helmet_ballistics[helmets[num][1]] = 2 * results[4], helmets[num][2], ceil(50 / (results[4])), helmets[num][3]
         num += 1
     
     # pull protection from visors
     cur = conn.cursor()
-    cur.execute('SELECT ballistic, name, image FROM visors')
+    cur.execute('SELECT ballistic, name, image, id FROM visors')
     visors = cur.fetchall()
 
     # visor damage function
@@ -168,14 +167,14 @@ WHERE ammunition.id = ?''', (id,))
     print(results[4])
     for visor in visors:
         if results[5] < visors[num][0]:
-            visor_ballistics[visors[num][1]] = floor(2 * results[4] * results[5] / visors[num][0]), visors[num][2], ceil(50 / floor(results[4] * results[5] / visors[num][0]))
+            visor_ballistics[visors[num][1]] = floor(2 * results[4] * results[5] / visors[num][0]), visors[num][2], ceil(50 / floor(results[4] * results[5] / visors[num][0])), visors[num][3]
         else:
-            visor_ballistics[visors[num][1]] = 2 * results[4], visors[num][2], ceil(50 / results[4])
+            visor_ballistics[visors[num][1]] = 2 * results[4], visors[num][2], ceil(50 / results[4]), visors[num][3]
         num += 1
 
     # pull protection from rigs
     cur = conn.cursor()
-    cur.execute('SELECT ballistic, name, image FROM chest_rigs')
+    cur.execute('SELECT ballistic, name, image, id FROM chest_rigs')
     rigs = cur.fetchall()
 
     # rig damage function
@@ -183,14 +182,19 @@ WHERE ammunition.id = ?''', (id,))
     print(results[4])
     for rig in rigs:
         if results[5] < rigs[num][0]:
-            rig_ballistics[rigs[num][1]] = floor(results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(100 / floor(results[4] * results[5] / rigs[num][0]))
+            rig_ballistics[rigs[num][1]] = floor(results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(100 / floor(results[4] * results[5] / rigs[num][0])), rigs[num][3]
         else:
-            rig_ballistics[rigs[num][1]] = results[4], rigs[num][2], ceil(100 / results[4])
+            rig_ballistics[rigs[num][1]] = results[4], rigs[num][2], ceil(100 / results[4]), rigs[num][3]
         num += 1
 
-    print(visor_ballistics)
     conn.close()
-    return render_template('ammo.html', ammo=results, weapons=weapons, helmet_ballistics=helmet_ballistics, visor_ballistics=visor_ballistics, rig_ballistics=rig_ballistics, title=results[1])
+    return render_template('detail/ammo.html', 
+                           ammo=results, 
+                           weapons=weapons, 
+                           helmet_ballistics=helmet_ballistics, 
+                           visor_ballistics=visor_ballistics, 
+                           rig_ballistics=rig_ballistics, 
+                           title=results[1])
 
 @app.route("/parts", methods=["GET", "POST"])
 def all_parts():
@@ -213,7 +217,7 @@ def all_parts():
     description = cur.fetchone()
     conn.close()
     return render_template('complex_list.html', 
-                           grouped_items=parts_by_type, 
+                           grouped_items=items_by_type, 
                            description=description,
                            tags=tags,
                            title="Parts", 
@@ -233,7 +237,7 @@ def part(id):
     weapons = cur.fetchall()
     print(weapons)
     conn.close()
-    return render_template('part.html', part=results, weapons=weapons, title=results[1])
+    return render_template('detail/part.html', part=results, weapons=weapons, title=results[1])
 
 @app.route("/attachments", methods=["GET", "POST"])
 def all_attachments():
@@ -275,7 +279,7 @@ def attachment(id):
                 SELECT weapon_id FROM weapon_attachments where attachment_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
-    return render_template('attachment.html', attachment=results, weapons=weapons, title=results[1])
+    return render_template('detail/attachment.html', attachment=results, weapons=weapons, title=results[1])
 
 @app.route("/magazines", methods=["GET", "POST"])
 def all_magazines():
@@ -329,7 +333,7 @@ WHERE magazines.id = ?''', (id,))
                 SELECT weapon_id FROM weapon_magazines where magazine_id = ?)''', (id,))
     weapons = cur.fetchall()
     conn.close()
-    return render_template('magazine.html', magazine=results, weapons=weapons, title=results[1])
+    return render_template('detail/magazine.html', magazine=results, weapons=weapons, title=results[1])
 
 @app.route("/helmets")
 def all_helmets():
@@ -375,19 +379,19 @@ def helmet(id):
 
     # pull damage and piercing from ammunition
     cur = conn.cursor()
-    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
     # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
+            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
         else:
-            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('helmet.html', helmet=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/helmet.html', helmet=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/rigs")
 def all_rigs():
@@ -429,19 +433,19 @@ def rig(id):
 
     # pull damage and piercing from ammunition
     cur = conn.cursor()
-    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
     # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
+            ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
         else:
-            ballistics[ammunition[num][2]] = int(ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0]), ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('rig.html', rig=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/rig.html', rig=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/visors")
 def all_visors():
@@ -487,19 +491,19 @@ def visor(id):
 
     # pull damage and piercing from ammunition
     cur = conn.cursor()
-    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
     # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), 
+            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
         else:
-            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/leg armors")
 def all_leg_armor():
@@ -541,19 +545,19 @@ def leg_armor(id):
 
     # pull damage and piercing from ammunition
     cur = conn.cursor()
-    cur.execute('SELECT damage, penetration, name, image FROM ammunition')
+    cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
     # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(0.25 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4]))
+            ballistics[ammunition[num][2]] = floor(0.25 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][3]
         else:
-            ballistics[ammunition[num][2]] = int(0.25 * ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0])
+            ballistics[ammunition[num][2]] = int(0.25 * ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0]), ammunition[num][3]
         num += 1
 
     conn.close()
-    return render_template('leg_armor.html', armor=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/leg_armor.html', armor=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 @app.route("/wearables")
 def all_wearables():
@@ -591,7 +595,7 @@ def wearable(id):
     results = cur.fetchall()[0]
 
     conn.close()
-    return render_template('wearable.html', wearable=results, title=results[1])
+    return render_template('detail/wearable.html', wearable=results, title=results[1])
 
 @app.route("/consumables")
 def all_consumables():
@@ -629,7 +633,7 @@ def consumable(id):
     results = cur.fetchall()[0]
 
     conn.close()
-    return render_template('consumable.html', consumable=results, title=results[1])
+    return render_template('detail/consumable.html', consumable=results, title=results[1])
 
 @app.route("/junks")
 def all_junk():
@@ -665,7 +669,7 @@ def junk(id):
     results = cur.fetchall()[0]
 
     conn.close()
-    return render_template('junk.html', item=results, title=results[1])
+    return render_template('detail/junk.html', item=results, title=results[1])
 
 @app.route("/containers")
 def all_containers():
@@ -703,7 +707,7 @@ def all_keys():
     description = cur.fetchone()
     conn.close()
     return render_template('complex_list.html', 
-                           grouped_items=keys_by_type, 
+                           grouped_items=items_by_type, 
                            description=description,
                            tags=tags,
                            title="Keys", 
@@ -718,7 +722,7 @@ def key(id):
     results = cur.fetchall()[0]
 
     conn.close()
-    return render_template('key.html', key=results, title=results[1])
+    return render_template('detail/key.html', key=results, title=results[1])
 
 if __name__ == '__main__':
     app.run(debug=True)
