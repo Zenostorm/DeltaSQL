@@ -270,6 +270,14 @@ h4 i:hover {
     color: #6865CF;
 }
 
+h4 a:hover {
+    color: #6865CF;
+}
+
+.footer-info {
+    margin-right: 0.5vw;
+}
+
 h5 {
     color: black;
     font-size: 1.5vw;

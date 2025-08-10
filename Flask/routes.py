@@ -12,6 +12,17 @@ DATABASE = "delta.db"
 def home():
     return render_template('home.html', title="Home")
 
+@app.route("/faq")
+def faq():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor
+    cur.execute('SELECT id, name, description, image FROM ammunition ORDER BY id')
+
+    info = cur.fetchall()
+
+    conn.close()
+    return render_template('faq.html', info=info, title="FAQ")
+
 
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
