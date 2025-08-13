@@ -735,5 +735,33 @@ def key(id):
     conn.close()
     return render_template('detail/key.html', key=results, title=results[1])
 
+@app.route("/structures")
+def all_landmarks():
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    tags = ("locations", "structures", "structure")
+
+    search_query = request.args.get('search', '')
+    items_by_type = {}
+
+    for category in ['Estonian Border', 'City-13']:
+        if search_query:
+            cur.execute("SELECT id, name, map, description, image FROM structures WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', category))
+        else:
+            cur.execute("SELECT id, name, map, description, image FROM structures WHERE type = ? ORDER BY id", (category,))
+        items_by_type[category] = cur.fetchall()
+
+    cur.execute("SELECT description FROM class_descriptions WHERE name = ?", ("structures",))
+
+    description = cur.fetchone()
+    conn.close()
+    return render_template('locations_list.html', 
+                           grouped_items=items_by_type, 
+                           description=description,
+                           tags=tags,
+                           title="Consumables", 
+                           search=search_query, 
+                           easter_egg_queries=easter_egg_queries)
+
 if __name__ == '__main__':
     app.run(debug=True)
