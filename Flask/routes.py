@@ -28,7 +28,6 @@ def faq():
         else:
             cur.execute("SELECT id, question, type, answer FROM faq WHERE type = ? ORDER BY id", (category,))
         questions_by_type[category] = cur.fetchall()
-        print(questions_by_type)
 
     conn.close()
     return render_template('faq.html', 

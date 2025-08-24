@@ -15,7 +15,9 @@
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if info %}
 {% for category, questions in info.items() %}
+{% if questions %}
 <h2>{{ category }}</h2>
+{% endif %}
 {% for question in questions %}
 <div class="faq-row">
     <div>
