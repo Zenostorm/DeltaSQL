@@ -15,9 +15,8 @@ def home():
 @app.route("/faq")
 def faq():
     conn = sqlite3.connect('delta.db')
-    cur = conn.cursor
-    cur.execute('SELECT id, name, description, image FROM ammunition ORDER BY id')
-
+    cur = conn.cursor()
+    cur.execute('SELECT id, question, type, answer FROM faq ORDER BY type')
     info = cur.fetchall()
 
     conn.close()
@@ -29,6 +28,7 @@ def all_weapons():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     tags = ("ballistics", "weapons", "weapon")
+    #tags = ("image folder", "specific image folder", "link")
 
     search_query = request.args.get('search', '')
     weapons_by_type = {}
@@ -759,9 +759,18 @@ def all_landmarks():
                            grouped_items=items_by_type, 
                            description=description,
                            tags=tags,
-                           title="Consumables", 
+                           title="Structures",
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
+
+#errors
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('error_page.html', error=404, issue="page not found"), 404
+
+@app.errorhandler(400)
+def bad_request(error):
+    return render_template('error_page.html', error=400, issue="bad request"), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
