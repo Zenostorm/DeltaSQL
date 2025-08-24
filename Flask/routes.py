@@ -12,15 +12,28 @@ DATABASE = "delta.db"
 def home():
     return render_template('home.html', title="Home")
 
-@app.route("/faq")
+@app.route("/faq", methods=["GET", "POST"])
 def faq():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute('SELECT id, question, type, answer FROM faq ORDER BY type')
     info = cur.fetchall()
 
+    search_query = request.args.get('search', '')
+    questions_by_type = {}
+
+    for category in ['General', 'Game']:
+        if search_query:
+            cur.execute("SELECT id, question, type, answer FROM faq WHERE question LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', category))
+        else:
+            cur.execute("SELECT id, question, type, answer FROM faq WHERE type = ? ORDER BY id", (category,))
+        questions_by_type[category] = cur.fetchall()
+        print(questions_by_type)
+
     conn.close()
-    return render_template('faq.html', info=info, title="FAQ")
+    return render_template('faq.html', 
+                           info=questions_by_type, 
+                           title="FAQ")
 
 
 @app.route("/weapons", methods=["GET", "POST"])

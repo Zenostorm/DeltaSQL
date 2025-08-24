@@ -14,13 +14,16 @@
 
 {% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if info %}
-{% for question in info %}
+{% for category, questions in info.items() %}
+<h2>{{ category }}</h2>
+{% for question in questions %}
 <div class="faq-row">
     <div>
         <h3>{{question[1]}}</h3>
         <h5>{{question[3]}}</h5>
     </div>
 </div>
+{% endfor %}
 {% endfor %}
 {% elif not is_easter_egg %}
 <div class="question-row">
