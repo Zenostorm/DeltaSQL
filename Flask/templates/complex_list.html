@@ -7,38 +7,38 @@
 
 {% include 'partials/searchbar.html' %}
 
-{% set is_easter_egg = search and search|lower in easter_egg_queries %}
-{% if grouped_items %}
+<!-- check if dictionary values are empty, store has_items check as a namespace -->
+{% set ns = namespace(has_items=false) %}
 {% for category, items in grouped_items.items() %}
-{% if items %}
-{% if category.endswith('s') %}
-    <h2>{{ category }}</h2>
+    {% if items %}
+        {% set ns.has_items = true %}
+    {% endif %}
+{% endfor %}
+
+{% if ns.has_items %}
+    {% for category, items in grouped_items.items() %}
+        {% if items %}
+            <h2>{{ category if category.endswith('s') else category ~ 's' }}</h2>
+            {% for item in items %}
+                <div class="row">
+                    <a href="{{ url_for(tags[2], id=item[0]) }}">
+                        <img src="/static/images/{{tags[0]}}/{{tags[1]}}/{{item[4]}}" class="icon">
+                    </a>
+                    <div>
+                        <h3>{{item[1]}}</h3>
+                        <h5>{{item[3]}}</h5>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
 {% else %}
-    <h2>{{ category }}s</h2>
-{% endif %}
-{% endif %}
-{% for item in items %}
-<div class="row">
-    <a href="{{ url_for(tags[2], id=item[0]) }}">
-        <img src="/static/images/{{tags[0]}}/{{tags[1]}}/{{item[4]}}" class="icon">
-    </a>
-
-    <div>
-        <h3>{{item[1]}}</h3>
-        <h5>{{item[3]}}</h5>
+    <div class="row">
+        <img src="/static/images/error.png" class="icon">
+        <div>
+            <h3>No results found</h3>
+            <h5>Try another search, or maybe stop trying to break my database.</h5>
+        </div>
     </div>
-</div>
-{% endfor %}
-{% endfor %}
-{% elif not is_easter_egg %}
-<div class="row">
-    <img src="/static/images/error.png" class="icon">
-
-    <div>
-        <h3>No results found</h3>
-        <h5>Try another search, or maybe stop trying to break my database.</h5>
-    </div>
-</div>
 {% endif %}
-{% include 'partials/easter_eggs.html' %}
 {% endblock %}

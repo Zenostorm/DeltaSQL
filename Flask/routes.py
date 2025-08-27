@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from math import ceil, floor
-import sqlite3, os
+import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 easter_egg_queries = ["contributors"]
@@ -8,21 +9,28 @@ easter_egg_queries = ["contributors"]
 app = Flask(__name__)
 DATABASE = "delta.db"
 
+
+# general routes
 @app.route("/")
 def home():
     return render_template('home.html', title="Home")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    return render_template('login.html')
+
 
 @app.route("/faq", methods=["GET", "POST"])
 def faq():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('SELECT id, question, type, answer FROM faq ORDER BY type')
-    info = cur.fetchall()
 
     search_query = request.args.get('search', '')
     questions_by_type = {}
+    categories = ['General', 'Game']
 
-    for category in ['General', 'Game']:
+    for category in categories:
         if search_query:
             cur.execute("SELECT id, question, type, answer FROM faq WHERE question LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', category))
         else:
@@ -30,45 +38,65 @@ def faq():
         questions_by_type[category] = cur.fetchall()
 
     conn.close()
-    return render_template('faq.html', 
-                           info=questions_by_type, 
+    return render_template('faq.html',
+                           info=questions_by_type,
                            title="FAQ")
 
 
+@app.route("/contributors")
+def contributors():
+    return render_template('contributors.html')
+
+
+# information routes
 @app.route("/weapons", methods=["GET", "POST"])
 def all_weapons():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     tags = ("ballistics", "weapons", "weapon")
-    #tags = ("image folder", "specific image folder", "link")
+    # tags should include the image folder group (e.g ballistics),
+    # the image folder,
+    # then the topic link, in this order.
+    # because list templates use these tags to fetch images and redirects.
 
     search_query = request.args.get('search', '')
-    weapons_by_type = {}
+    items_by_type = {}
+    categories = []
 
-    for category in ['Pistol', 'Submachine gun', 'Shotgun', 'Assault Carbine', 'Assault Rifle', 'Sniper Rifle', 'Light Machine Gun', 'Battle Rifle', 'Rocket Launcher']:
+    # fetch each unique instant of type within the table (e.g pistols, rifles)
+    cur.execute("SELECT DISTINCT type FROM weapons")
+    categories = cur.fetchall()
+    categories = [", ".join(map(str, category)) for category in categories]
+
+    # iterate through each category, and check for a search query.
+    for category in categories:
         if search_query:
             cur.execute("SELECT id, name, type, description, image FROM weapons WHERE name LIKE ? AND type = ? ORDER BY id", ('%' + search_query + '%', category))
         else:
             cur.execute("SELECT id, name, type, description, image FROM weapons WHERE type = ? ORDER BY id", (category,))
-        weapons_by_type[category] = cur.fetchall()
+        items_by_type[category] = cur.fetchall()
 
+    # fetch topic description
     cur.execute("SELECT description FROM class_descriptions WHERE name = ?", ("weapons",))
-
     description = cur.fetchone()
+
+    print(items_by_type)
+
     conn.close()
-    return render_template('complex_list.html', 
-                           grouped_items=weapons_by_type, 
+    return render_template('complex_list.html',
+                           grouped_items=items_by_type,
                            description=description,
                            tags=tags,
-                           title="Weapons", 
-                           search=search_query, 
+                           title="Weapons",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/weapon/<int:id>")
 def weapon(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT 
+    cur.execute('''SELECT
     weapons.id,
     weapons.name,
     weapons.type,
@@ -83,30 +111,32 @@ FROM weapons
 JOIN calibers ON weapons.caliber_id = calibers.id
 WHERE weapons.id = ?''', (id,))
     results = cur.fetchall()[0]
+    # fetch all information based on weapon's ID, and fetch caliber name from calibers table.
 
-    # fetch optics
+    # fetch compatible optics
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments WHERE weapon_id = ?) AND type = ?''', (id, "Optic"))
     optics = cur.fetchall()
 
-    # fetch muzzles
+    # fetch compatible muzzles
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Muzzle"))
     muzzles = cur.fetchall()
-    
-    # fetch extras
+
+    # fetch compatible extras
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
                 SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Extra"))
     extras = cur.fetchall()
 
-    # fetch magazines
+    # fetch compatible  magazines
     cur.execute('''SELECT id, name, image FROM magazines WHERE id IN (
                 SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
     magazines = cur.fetchall()
 
     conn.close()
     return render_template('detail/weapon.html', weapon=results, optics=optics, muzzles=muzzles, extras=extras, magazines=magazines, title=results[1])
- 
+
+
 @app.route("/ammunition")
 def ammunition():
     conn = sqlite3.connect('delta.db')
@@ -127,13 +157,14 @@ def ammunition():
     description = cur.fetchone()
 
     conn.close()
-    return render_template('simple_list.html', 
-                           params=results, 
-                           description=description, 
+    return render_template('simple_list.html',
+                           params=results,
+                           description=description,
                            tags=tags,
-                           title="Ammunition", 
-                           search=search_query, 
+                           title="Ammunition",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/ammo/<int:id>")
 def ammo(id):
@@ -144,14 +175,14 @@ def ammo(id):
 
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT 
-    ammunition.id, 
-    calibers.name AS caliber_id, 
-    ammunition.name, 
-    ammunition.velocity, 
-    ammunition.damage, 
-    ammunition.penetration, 
-    ammunition.image, 
+    cur.execute('''SELECT
+    ammunition.id,
+    calibers.name AS caliber_id,
+    ammunition.name,
+    ammunition.velocity,
+    ammunition.damage,
+    ammunition.penetration,
+    ammunition.image,
     ammunition.description
 FROM ammunition
 JOIN calibers ON ammunition.caliber_id = calibers.id
@@ -179,7 +210,7 @@ WHERE ammunition.id = ?''', (id,))
         else:
             helmet_ballistics[helmets[num][1]] = 2 * results[4], helmets[num][2], ceil(50 / (results[4])), helmets[num][3]
         num += 1
-    
+
     # pull protection from visors
     cur = conn.cursor()
     cur.execute('SELECT ballistic, name, image, id FROM visors')
@@ -211,13 +242,14 @@ WHERE ammunition.id = ?''', (id,))
         num += 1
 
     conn.close()
-    return render_template('detail/ammo.html', 
-                           ammo=results, 
-                           weapons=weapons, 
-                           helmet_ballistics=helmet_ballistics, 
-                           visor_ballistics=visor_ballistics, 
-                           rig_ballistics=rig_ballistics, 
+    return render_template('detail/ammo.html',
+                           ammo=results,
+                           weapons=weapons,
+                           helmet_ballistics=helmet_ballistics,
+                           visor_ballistics=visor_ballistics,
+                           rig_ballistics=rig_ballistics,
                            title=results[1])
+
 
 @app.route("/parts", methods=["GET", "POST"])
 def all_parts():
@@ -239,13 +271,14 @@ def all_parts():
 
     description = cur.fetchone()
     conn.close()
-    return render_template('complex_list.html', 
-                           grouped_items=items_by_type, 
+    return render_template('complex_list.html',
+                           grouped_items=items_by_type,
                            description=description,
                            tags=tags,
-                           title="Parts", 
-                           search=search_query, 
+                           title="Parts",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/part/<int:id>")
 def part(id):
@@ -261,6 +294,7 @@ def part(id):
     print(weapons)
     conn.close()
     return render_template('detail/part.html', part=results, weapons=weapons, title=results[1])
+
 
 @app.route("/attachments", methods=["GET", "POST"])
 def all_attachments():
@@ -282,12 +316,12 @@ def all_attachments():
 
     description = cur.fetchone()
     conn.close()
-    return render_template('complex_list.html', 
-                           grouped_items=items_by_type, 
+    return render_template('complex_list.html',
+                           grouped_items=items_by_type,
                            description=description,
                            tags=tags,
-                           title="Attachments", 
-                           search=search_query, 
+                           title="Attachments",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
 
 @app.route("/attachment/<int:id>")
@@ -304,6 +338,7 @@ def attachment(id):
     conn.close()
     return render_template('detail/attachment.html', attachment=results, weapons=weapons, title=results[1])
 
+
 @app.route("/magazines", methods=["GET", "POST"])
 def all_magazines():
     conn = sqlite3.connect('delta.db')
@@ -313,10 +348,10 @@ def all_magazines():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT id, name, description, image FROM magazines WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM magazines WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute('SELECT id, name, description, image FROM magazines ORDER BY id')
-    
+
     results = cur.fetchall()
 
     cur.execute("SELECT description FROM class_descriptions WHERE name = ?", ("ammunition",))
@@ -324,19 +359,20 @@ def all_magazines():
     description = cur.fetchone()
 
     conn.close()
-    return render_template('simple_list.html', 
-                           params=results, 
-                           description=description, 
-                           tags=tags, 
-                           title="Magazines", 
-                           search=search_query, 
+    return render_template('simple_list.html',
+                           params=results,
+                           description=description,
+                           tags=tags,
+                           title="Magazines",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/magazine/<int:id>")
 def magazine(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT 
+    cur.execute('''SELECT
     magazines.id,
     magazines.name,
     calibers.name AS caliber_name,
@@ -358,6 +394,7 @@ WHERE magazines.id = ?''', (id,))
     conn.close()
     return render_template('detail/magazine.html', magazine=results, weapons=weapons, title=results[1])
 
+
 @app.route("/helmets")
 def all_helmets():
     conn = sqlite3.connect('delta.db')
@@ -367,7 +404,7 @@ def all_helmets():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT id, name, description, image FROM helmets WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM helmets WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute('SELECT id, name, description, image FROM helmets ORDER BY id')
 
@@ -377,13 +414,14 @@ def all_helmets():
 
     description = cur.fetchone()
     conn.close()
-    return render_template('simple_list.html', 
-                           params=results, 
-                           description=description, 
-                           tags=tags, 
-                           title="Helmets", 
-                           search=search_query, 
+    return render_template('simple_list.html',
+                           params=results,
+                           description=description,
+                           tags=tags,
+                           title="Helmets",
+                           search=search_query,
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/helmet/<int:id>")
 def helmet(id):
@@ -416,6 +454,7 @@ def helmet(id):
     conn.close()
     return render_template('detail/helmet.html', helmet=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
+
 @app.route("/rigs")
 def all_rigs():
     conn = sqlite3.connect('delta.db')
@@ -442,6 +481,7 @@ def all_rigs():
                            title="Rigs", 
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/rig/<int:id>")
 def rig(id):
@@ -470,6 +510,7 @@ def rig(id):
     conn.close()
     return render_template('detail/rig.html', rig=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
+
 @app.route("/visors")
 def all_visors():
     conn = sqlite3.connect('delta.db')
@@ -479,7 +520,7 @@ def all_visors():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT id, name, description, image FROM visors WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM visors WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute('SELECT id, name, description, image FROM visors ORDER BY id')
     
@@ -496,6 +537,7 @@ def all_visors():
                            title="Visors", 
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/visor/<int:id>")
 def visor(id):
@@ -528,6 +570,7 @@ def visor(id):
     conn.close()
     return render_template('detail/visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
+
 @app.route("/leg armors")
 def all_leg_armor():
     conn = sqlite3.connect('delta.db')
@@ -555,6 +598,7 @@ def all_leg_armor():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
+
 @app.route("/leg armor/<int:id>")
 def leg_armor(id):
     ballistics = {}
@@ -581,6 +625,7 @@ def leg_armor(id):
 
     conn.close()
     return render_template('detail/leg_armor.html', armor=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
+
 
 @app.route("/wearables")
 def all_wearables():
@@ -610,6 +655,7 @@ def all_wearables():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
+
 @app.route("/wearable/<int:id>")
 def wearable(id):
     conn = sqlite3.connect('delta.db')
@@ -619,6 +665,7 @@ def wearable(id):
 
     conn.close()
     return render_template('detail/wearable.html', wearable=results, title=results[1])
+
 
 @app.route("/consumables")
 def all_consumables():
@@ -648,6 +695,7 @@ def all_consumables():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
+
 @app.route("/consumable/<int:id>")
 def consumable(id):
     conn = sqlite3.connect('delta.db')
@@ -658,6 +706,7 @@ def consumable(id):
     conn.close()
     return render_template('detail/consumable.html', consumable=results, title=results[1])
 
+
 @app.route("/junks")
 def all_junk():
     conn = sqlite3.connect('delta.db')
@@ -667,7 +716,7 @@ def all_junk():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT id, name, description, image FROM junk WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT id, name, description, image FROM junk WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute("SELECT id, name, description, image FROM junk ORDER BY id")
     results = cur.fetchall()
@@ -684,6 +733,7 @@ def all_junk():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
+
 @app.route("/junk/<int:id>")
 def junk(id):
     conn = sqlite3.connect('delta.db')
@@ -694,6 +744,7 @@ def junk(id):
     conn.close()
     return render_template('detail/junk.html', item=results, title=results[1])
 
+
 @app.route("/containers")
 def all_containers():
     conn = sqlite3.connect('delta.db')
@@ -702,12 +753,13 @@ def all_containers():
     search_query = request.args.get('search', '')
 
     if search_query:
-       cur.execute("SELECT * FROM containers WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
+        cur.execute("SELECT * FROM containers WHERE name LIKE ? ORDER BY id", ('%' + search_query + '%',))
     else:
         cur.execute("SELECT * FROM containers ORDER BY id")
     results = cur.fetchall()
     conn.close()
     return render_template('containers.html', params=results, title="Containers", search=search_query, easter_egg_queries=easter_egg_queries)
+
 
 @app.route("/keys")
 def all_keys():
@@ -737,6 +789,7 @@ def all_keys():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
+
 @app.route("/key/<int:id>")
 def key(id):
     conn = sqlite3.connect('delta.db')
@@ -746,6 +799,7 @@ def key(id):
 
     conn.close()
     return render_template('detail/key.html', key=results, title=results[1])
+
 
 @app.route("/structures")
 def all_landmarks():
@@ -775,14 +829,17 @@ def all_landmarks():
                            search=search_query, 
                            easter_egg_queries=easter_egg_queries)
 
-#errors
+
+# routes for catching errors
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('error_page.html', error=404, issue="page not found"), 404
 
+
 @app.errorhandler(400)
 def bad_request(error):
     return render_template('error_page.html', error=400, issue="bad request"), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)
