@@ -12,7 +12,6 @@
 {% include 'partials/searchbar.html' %}
 
 
-{% set is_easter_egg = search and search|lower in easter_egg_queries %}
 {% if info %}
 {% for category, questions in info.items() %}
 {% if questions %}
@@ -37,5 +36,4 @@
     </div>
 </div>
 {% endif %}
-{% include 'partials/easter_eggs.html' %}
 {% endblock %}

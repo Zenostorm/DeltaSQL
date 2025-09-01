@@ -1,0 +1,23 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<h2>Contributors</h2>
+<h4>
+    Thank you to everyone who contributed to the creation of this website. 
+    Helping me gather information, take screenshots, and getting icons. 
+    I never would've been able to do this without all of your hard work. 
+    Please never contact me again.
+</h4>
+<br><br>
+
+<!-- all contributors -->
+{% for contributor in contributors %}
+    <div class="row">
+        <img src="/static/images/contributors/{{contributor[2]}}" class="icon">
+
+        <div>
+            <h3>{{contributor[0]}}</h3>
+            <h5>{{contributor[1]}}</h5>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}

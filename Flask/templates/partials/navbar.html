@@ -1,0 +1,50 @@
+<nav>
+    <ul>
+        <!-- bhme button-->
+        <li><a href="{{ url_for('home') }}">Home</a></li>
+
+        <!--ballistics dropdown-->
+        <div class="dropdown">
+            <button class="dropbtn">
+                Ballistics <i class="fa fa-caret-down"></i>
+            </button>
+
+            <div class="dropdown-content">
+                <li><a href="{{ url_for('item_category_list', resource='weapons') }}">Weapons</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='ammunition') }}">Ammunition</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='parts') }}">Parts</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='attachments') }}">Attachments</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='magazines') }}">Magazines</a></li>
+            </div>
+        </div>
+
+        <!-- gear dropdown-->
+        <div class="dropdown">
+            <button class="dropbtn">
+                Gear <i class="fa fa-caret-down"></i>
+            </button>
+
+            <div class="dropdown-content">
+                <li><a href="{{ url_for('item_category_list', resource='helmets') }}">Helmets</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='visors') }}">Visors</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='chest rigs') }}">Chest rigs</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='leg armor') }}">Leg armor</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='wearables') }}">Wearables</a></li>
+            </div>
+        </div>
+
+        <!-- items dropdown-->
+        <div class="dropdown">
+            <button class="dropbtn">
+                Items <i class="fa fa-caret-down"></i>
+            </button>
+
+            <div class="dropdown-content">
+                <li><a href="{{ url_for('item_category_list', resource='consumables') }}">Consumables</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='junk') }}">Junk</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='containers') }}">Lootable Containers</a></li>
+                <li><a href="{{ url_for('item_category_list', resource='keys') }}">Keys</a></li>
+            </div>
+        </div>
+    </ul>
+</nav>

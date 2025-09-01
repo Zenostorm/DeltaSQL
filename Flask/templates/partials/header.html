@@ -3,58 +3,8 @@
     <a href="{{ url_for('home') }}">
         <img src="/static/images/logo.png" class="logo">
     </a>
-    <h1>Project Delta <span class="purple">Database</span></h1>
+    <h1>Project Delta <span class="purple">Wiki</span></h1>
 
 </div>
 
-<!-- navigation bar -->
-<nav>
-    <ul>
-        <!--Home button-->
-        <li><a href="{{ url_for('home') }}">Home</a></li>
-
-        <!--Ballistics dropdown-->
-        <div class="dropdown">
-            <button class="dropbtn">
-                Ballistics <i class="fa fa-caret-down"></i>
-            </button>
-
-            <div class="dropdown-content">
-                <li><a href="{{ url_for('all_weapons') }}">Weapons</a></li>
-                <li><a href="{{ url_for('ammunition') }}">Ammunition</a></li>
-                <li><a href="{{ url_for('all_parts') }}">Parts</a></li>
-                <li><a href="{{ url_for('all_attachments') }}">Attachments</a></li>
-                <li><a href="{{ url_for('all_magazines') }}">Magazines</a></li>
-            </div>
-        </div>
-
-        <!--Gear dropdown-->
-        <div class="dropdown">
-            <button class="dropbtn">
-                Gear <i class="fa fa-caret-down"></i>
-            </button>
-
-            <div class="dropdown-content">
-                <li><a href="{{ url_for('all_helmets') }}">Helmets</a></li>
-                <li><a href="{{ url_for('all_visors') }}">Visors</a></li>
-                <li><a href="{{ url_for('all_rigs') }}">Chest rigs</a></li>
-                <li><a href="{{ url_for('all_leg_armor') }}">Leg armor</a></li>
-                <li><a href="{{ url_for('all_wearables') }}">Wearables</a></li>
-            </div>
-        </div>
-
-        <!--Items dropdown-->
-        <div class="dropdown">
-            <button class="dropbtn">
-                Items <i class="fa fa-caret-down"></i>
-            </button>
-
-            <div class="dropdown-content">
-                <li><a href="{{ url_for('all_consumables') }}">Consumables</a></li>
-                <li><a href="{{ url_for('all_junk') }}">Junk</a></li>
-                <li><a href="{{ url_for('all_containers') }}">Lootable Containers</a></li>
-                <li><a href="{{ url_for('all_keys') }}">Keys</a></li>
-            </div>
-        </div>
-    </ul>
-</nav>
+{% include 'partials/navbar.html' %}
