@@ -141,6 +141,8 @@ def item_category_list(resource):
 
     conn.close()
 
+    print(items_by_type)
+
     return render_template(
         'item_list.html',
         grouped_items=items_by_type,
@@ -426,7 +428,7 @@ def visor(id):
     return render_template('detail/visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
 
 
-@app.route("/leg armor/<int:id>")
+@app.route("/leg_armor/<int:id>")
 def leg_armor(id):
     ballistics = {}
     num = 0

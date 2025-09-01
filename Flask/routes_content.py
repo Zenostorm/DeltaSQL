@@ -11,8 +11,11 @@ resource_configs = {
     "magazines": ("ballistics", "magazines", "magazine"),
     "helmets": ("gear", "helmets", "helmet"),
     "visors": ("gear", "visors", "visor"),
-    "chest_rigs": ("gear", "chest rigs", "rig"),
-    "leg_armor": ("gear", "leg armor", "leg armor"),
-    "wearables": ("gear", "wearables", "wearable")
+    "chest rigs": ("gear", "chest rigs", "rig"),
+    "leg armor": ("gear", "leg armor", "leg_armor"),
+    "wearables": ("gear", "wearables", "wearable"),
+    "consumables": ("items", "consumables", "consumable"),
+    "junk": ("items", "junk", "junk"),
+    "keys": ("items", "keys", "key")
     # extend dictionary when new resource is added
 }
