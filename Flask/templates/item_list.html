@@ -1,6 +1,6 @@
 {% extends "partials/layout.html" %}
 {% block content %}
-<h2>{{title}}</h2>
+<h2>{{title | replace("_", " ") }}</h2>
 <h4>
     {{description[0]}}
 </h4>

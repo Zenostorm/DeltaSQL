@@ -34,7 +34,7 @@
         <h5>
             {% for name, value in rig_ballistics.items() %}
             <div class="ballistics-row">
-                <img src="/static/images/gear/chest rigs/{{ value [1] }}" class="ballistics-icon">
+                <img src="/static/images/gear/chest_rigs/{{ value [1] }}" class="ballistics-icon">
                 <a href="{{ url_for('rig', id=value[3]) }}">{{ name }}</a>
                 <h4>Damage:  {{ value[0] }} <br> Shots to kill: {{ value[2] }}</h4>
             </div>

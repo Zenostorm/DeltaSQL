@@ -72,7 +72,7 @@ def item_category_list(resource):
 
     # if topic isn't in configs, return 404 error
     if resource not in resource_configs:
-        abort(404)
+        pass
 
     tags = resource_configs[resource]
     search_query = request.args.get('search', '')
@@ -206,18 +206,17 @@ def ammo(id):
 
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT
-    ammunition.id,
-    calibers.name AS caliber_id,
-    ammunition.name,
-    ammunition.velocity,
-    ammunition.damage,
-    ammunition.penetration,
-    ammunition.image,
-    ammunition.description
-FROM ammunition
-JOIN calibers ON ammunition.caliber_id = calibers.id
-WHERE ammunition.id = ?''', (id,))
+    cur.execute("SELECT ammunition.id, "
+                "calibers.name AS caliber_id, "
+                "ammunition.name, "
+                "ammunition.velocity, "
+                "ammunition.damage, "
+                "ammunition.penetration, "
+                "ammunition.image, "
+                "ammunition.description "
+                "FROM ammunition "
+                "JOIN calibers ON ammunition.caliber_id = calibers.id "
+                "WHERE ammunition.id = ?", (id,))
     results = cur.fetchall()[0]
 
     cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
