@@ -24,7 +24,7 @@
 
         <div class="topic-box">
             <img src="/static/images/ballistics/magazines/{{magazine[8]}}" class="topic-icon">
-            <a href="http://127.0.0.1:5000/ammunition?search={{magazine[2]}}">
+            <a href="{{ url_for('item_category_list', resource='ammunition', search=magazine[2])}}">
                 <h6 class="topic-row">Caliber <br> <span class="lighter"><i class="fa-solid fa-caret-right"></i> {{magazine[2]}}</span></h6>
             </a>
             <h6 class="topic-row">Capacity <br> <span class="lighter">{{magazine[3]}}</span></h6>

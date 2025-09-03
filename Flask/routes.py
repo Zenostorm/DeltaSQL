@@ -72,7 +72,7 @@ def item_category_list(resource):
 
     # if topic isn't in configs, return 404 error
     if resource not in resource_configs:
-        pass
+        abort(404)
 
     tags = resource_configs[resource]
     search_query = request.args.get('search', '')
