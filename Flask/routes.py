@@ -14,9 +14,61 @@ def home():
     return render_template('home.html', title="Home")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")  # Page for the admin login
 def login():
-    return render_template('login.html')
+    global login_message
+    current_login_message = login_message
+    login_message = ""
+    return render_template("login.html",
+                           login_message=current_login_message,
+                           admin=admin,
+                           username_max_length=routes_content.username_max_length,
+                           password_max_length=routes_content.password_max_length,
+                           title=get_title("/login"))
+
+
+@app.route("/loginregister", methods=['GET', 'POST'])  # Register the inputted username and password
+def loginregister():
+    global login_message, admin
+    success = False
+    userid = 0
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    if not username:
+        login_message = routes_content.login_failure_message
+        return app.redirect("/login")
+
+    if not password:
+        login_message = routes_content.login_failure_message
+        return app.redirect("/login")
+
+    if len(username) > routes_content.username_max_length:
+        login_message = routes_content.username_too_large_message
+        return app.redirect("/login")
+
+    if len(password) > routes_content.password_max_length:
+        login_message = routes_content.password_too_large_message
+        return app.redirect("/login")
+
+    userdata = execute_query("SELECT id, username FROM AdminLogins")
+    for user in userdata:
+        if username == user[1]:
+
+            success = True
+            userid = user[0]
+            break
+    if success:
+        success = False
+        if check_password_hash(execute_query("SELECT passwordhash FROM AdminLogins WHERE id=?",
+                                             (userid,))[0][0], password):
+            admin = True
+            login_message = routes_content.login_success_message
+            success = True
+
+    if not success:
+        login_message = routes_content.login_failure_message
+    return app.redirect("/login")
 
 
 @app.route("/contributors")
@@ -171,7 +223,11 @@ def weapon(id):
 FROM weapons
 JOIN calibers ON weapons.caliber_id = calibers.id
 WHERE weapons.id = ?''', (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
+
+    # check for list index out of range error
+    if not results:
+        abort(404)
 
     # fetch compatible optics
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
@@ -301,8 +357,11 @@ def attachment(id):
     results = cur.fetchall()[0]
 
     cur = conn.cursor()
-    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
-                SELECT weapon_id FROM weapon_attachments where attachment_id = ?)''', (id,))
+    cur.execute("SELECT id, name, image "
+                "FROM weapons WHERE id "
+                "IN (SELECT weapon_id "
+                "FROM weapon_attachments where attachment_id = ?)",
+                (id,))
     weapons = cur.fetchall()
     conn.close()
     return render_template('detail/attachment.html', attachment=results, weapons=weapons, title=results[1])
@@ -446,9 +505,9 @@ def leg_armor(id):
     # calculate damage and add to a dictionary
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(0.25 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][3]
+            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
         else:
-            ballistics[ammunition[num][2]] = int(0.25 * ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0]), ammunition[num][3]
+            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
         num += 1
 
     conn.close()
@@ -502,12 +561,23 @@ def key(id):
 # ERROR ROUTES
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('error_page.html', error=404, issue="page not found"), 404
+    return render_template('error_page.html',
+                           error=404,
+                           issue="page not found")
 
 
 @app.errorhandler(400)
 def bad_request(error):
-    return render_template('error_page.html', error=400, issue="bad request"), 400
+    return render_template('error_page.html',
+                           error=400,
+                           issue="bad request")
+
+
+@app.errorhandler(500)
+def bad_request(error):
+    return render_template('error_page.html',
+                           error=500,
+                           issue="Internal server error")
 
 
 if __name__ == '__main__':

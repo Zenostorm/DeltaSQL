@@ -1,3 +1,8 @@
+# constants
+username_max_length = 30
+password_max_length = 100
+
+
 # define resources and their tags
 # tags should include:
 # 1. the grouped folder (e.g ballistics),
