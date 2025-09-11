@@ -1,9 +1,18 @@
-# constants
-username_max_length = 30
-password_max_length = 100
+# CONSTANTS
+search_min_length = 3
+search_max_length = 100
 
+user_max_length = 30
+pass_max_length = 100
 
-# define resources and their tags
+# messages
+login_failure = "Incorrect username or password"
+user_too_long = "Username too long"
+pass_too_long = "Password too long"
+
+login_success = "Welcome back administrator, your progress will be recorded"
+
+# RESOURCE CONFIGS
 # tags should include:
 # 1. the grouped folder (e.g ballistics),
 # 2. the image folder,

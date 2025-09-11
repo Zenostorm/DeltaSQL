@@ -1,40 +1,21 @@
 {% extends "partials/layout.html" %}
 {% block content %}
-<h2>Login</h2>
+<h2>Admin Login</h2>
+<hr><br>
 
-{% block content %}
-{% if not admin %}
-<form action="/loginregister" method="post">
-    <label>Username</label>
-    <br>
-    <input type="text" name="username" minlength="1" maxlength="{{username_max_length}}" required>
-    <br>
-    <label>Password</label>
-    <br>
-    <input type="password" name="password" minlength="1" maxlength="{{password_max_length}}" required>
-    <br>
-    <input type="submit" value="Log in" class="submit-button">
-</form>
-{% endif %}
-{% if login_message %}
-<h1>{{login_message}}</h1>
-{% endif %}
-{% endblock %}
-<!--
-<form action="/tools" method="post">
-    <select name="sort">
-        {% for i in sort %}
-        <option value="{{i}}">{{sort[i][0]}}</option>
-        {% endfor %}
-    </select>
-
-    <select name="sortdir">
-        <option value="ASC">Ascending</option>
-        <option value="DESC">Descending</option>
-    </select>
-
-    <input type="submit" value="Sort">
-</form>
--->
+<div class="login-box">
+    {% if not admin %}
+    <form action="/loginregister" method="post">
+        <h7>Username*</h7>
+        <input type="text" name="username" placeholder="Username" minlength="1" maxlength="{{user_max_length}}" required class="login">
+        <h7>Password*</h7>
+        <input type="password" name="password" placeholder="Password" minlength="1" maxlength="{{pass_max_length}}" required class="login">
+        <input type="submit" value="Log in" class="login-submit">
+    </form>
+    {% endif %}
+    {% if login_message %}
+        <h8>{{login_message}}</h8>
+    {% endif %}
+</div>
 
 {% endblock %}

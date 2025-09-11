@@ -7,77 +7,98 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 DATABASE = "delta.db"
 
+login_message = ""
+admin = False
 
-# general routes
+
+# REQUESTS
+def index_range_handler(results):
+    if not results:
+        abort(404)
+
+
+def searchbar_length_handler(search, page):
+    if len(search) < routes_content.search_min_length:
+        abort(400)
+    if len(search) > routes_content.search_max_length:
+        abort(400)
+
+
+# GENERAL ROUTES
 @app.route("/")
 def home():
     return render_template('home.html', title="Home")
 
 
-@app.route("/login")  # Page for the admin login
+@app.route("/login")  # page for the admin login
 def login():
-    global login_message
-    current_login_message = login_message
+    global login_message  # login_message used by loginregister route
+    current_login_message = login_message  # the displayed login message
     login_message = ""
+
     return render_template("login.html",
                            login_message=current_login_message,
                            admin=admin,
-                           username_max_length=routes_content.username_max_length,
-                           password_max_length=routes_content.password_max_length,
-                           title=get_title("/login"))
+                           user_max_length=routes_content.user_max_length,
+                           pass_max_length=routes_content.pass_max_length,
+                           title='login')
 
 
-@app.route("/loginregister", methods=['GET', 'POST'])  # Register the inputted username and password
+@app.route("/loginregister", methods=['GET', 'POST'])  # check inputted details
 def loginregister():
-    global login_message, admin
-    success = False
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    global login_message, admin  # admin bool
+    success = False  # success condition for login
     userid = 0
-    username = request.form.get("username")
-    password = request.form.get("password")
+    username = request.form.get("username")  # request username
+    password = request.form.get("password")  # request password
 
-    if not username:
-        login_message = routes_content.login_failure_message
+    if not username or not password:
+        login_message = routes_content.login_failure
         return app.redirect("/login")
 
-    if not password:
-        login_message = routes_content.login_failure_message
+    if len(username) > routes_content.user_max_length:
+        login_message = routes_content.user_too_long
         return app.redirect("/login")
 
-    if len(username) > routes_content.username_max_length:
-        login_message = routes_content.username_too_large_message
+    if len(password) > routes_content.pass_max_length:
+        login_message = routes_content.pass_too_long
         return app.redirect("/login")
 
-    if len(password) > routes_content.password_max_length:
-        login_message = routes_content.password_too_large_message
-        return app.redirect("/login")
-
-    userdata = execute_query("SELECT id, username FROM AdminLogins")
+    cur.execute("SELECT id, username FROM users")
+    userdata = cur.fetchall()
     for user in userdata:
         if username == user[1]:
-
             success = True
             userid = user[0]
+            print(userid)
             break
     if success:
         success = False
-        if check_password_hash(execute_query("SELECT passwordhash FROM AdminLogins WHERE id=?",
-                                             (userid,))[0][0], password):
+        cur.execute("SELECT passwordhash FROM users WHERE id = ?", (userid,))
+        stored_hash = cur.fetchone()
+        print(stored_hash)
+        if check_password_hash(stored_hash[0], password):
             admin = True
-            login_message = routes_content.login_success_message
+            login_message = routes_content.login_success
             success = True
 
     if not success:
-        login_message = routes_content.login_failure_message
+        login_message = routes_content.login_failure
     return app.redirect("/login")
 
 
 @app.route("/contributors")
 def contributors():
+    # this route is found in the footer of the website, 
+    # it is a list of people who helped me gather data for this website
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
     cur.execute("SELECT name, description, image FROM contributors")
-    contributors = cur.fetchall()
+    contributors = cur.fetchall()  # fetch all contributors
 
     conn.close()
     return render_template('contributors.html', contributors=contributors)
@@ -95,7 +116,7 @@ def faq():
     # iterate for each element in categories,
     # then add values to questions_by_type dictionary
     for category in categories:
-        if search_query:
+        if search_query:  # check for search query, if none pull everything
             cur.execute("SELECT id, question, type, answer "
                         "FROM faq "
                         "WHERE question "
@@ -120,22 +141,23 @@ def faq():
 def item_category_list(resource):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
+    # get resource configs dictionary from route_content.py file
     resource_configs = routes_content.resource_configs
 
     # if topic isn't in configs, return 404 error
     if resource not in resource_configs:
         abort(404)
 
+    # set table to the key of configs,
+    # set tags to the values of configs
+    table = f'"{resource}"'
     tags = resource_configs[resource]
     search_query = request.args.get('search', '')
     items_by_type = {}
 
-    # always wrap table name in quotes for safety
-    table = f'"{resource}"'
-
-    # fetch columns
+    # fetch columns from table
     cur.execute(f"PRAGMA table_info({table})")
-    columns = [row[1] for row in cur.fetchall()]  # row[1] = column name
+    columns = [row[1] for row in cur.fetchall()]  # row[1] = name of column
 
     # check for column named "type"
     if "type" in columns:
@@ -143,12 +165,13 @@ def item_category_list(resource):
         categories = cur.fetchall()
         categories = [", ".join(map(str, category)) for category in categories]
     else:
-        categories = ["generic"]
+        categories = ["generic"]  # if there's no "types", set a dummy category
 
+    # iterate through each category
     # fetch information from tables
-    if categories[0] != "generic":  # if there are categories
-        for category in categories:
-            if search_query:
+    if categories[0] != "generic":
+        for category in categories:  # if there are categories
+            if search_query:  # check for search, if none just pull everything
                 cur.execute(
                     f"SELECT id, name, description, image, type "
                     f"FROM {table} "
@@ -165,8 +188,8 @@ def item_category_list(resource):
                     (category,)
                 )
             items_by_type[category] = cur.fetchall()
-    else:  # no categories
-        if search_query:
+    else:  # if there are no categories
+        if search_query:  # check for search, if none just pull everything
             cur.execute(
                 f"SELECT id, name, description, image "
                 f"FROM {table} "
@@ -182,7 +205,7 @@ def item_category_list(resource):
             )
         items_by_type["generic"] = cur.fetchall()
 
-    # fetch description for this resource
+    # fetch description for this topic
     cur.execute(
         "SELECT description "
         "FROM class_descriptions "
@@ -192,8 +215,6 @@ def item_category_list(resource):
     description = cur.fetchone()
 
     conn.close()
-
-    print(items_by_type)
 
     return render_template(
         'item_list.html',
@@ -210,24 +231,23 @@ def weapon(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()  # and fetch caliber name from calibers table.
     cur.execute('''SELECT
-    weapons.id,
-    weapons.name,
-    weapons.type,
-    calibers.name AS caliber_name,
-    weapons.fire_mode,
-    weapons.RPM,
-    weapons.durability,
-    weapons.description,
-    weapons.image,
-    weapons.dmg_mult
-FROM weapons
-JOIN calibers ON weapons.caliber_id = calibers.id
-WHERE weapons.id = ?''', (id,))
+                weapons.id,
+                weapons.name,
+                weapons.type,
+                calibers.name AS caliber_name,
+                weapons.fire_mode,
+                weapons.RPM,
+                weapons.durability,
+                weapons.description,
+                weapons.image,
+                weapons.dmg_mult
+                FROM weapons
+                JOIN calibers ON weapons.caliber_id = calibers.id
+                WHERE weapons.id = ?''', (id,))
     results = cur.fetchone()
 
     # check for list index out of range error
-    if not results:
-        abort(404)
+    index_range_handler(results)
 
     # fetch compatible optics
     cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
@@ -563,18 +583,18 @@ def key(id):
 def page_not_found(error):
     return render_template('error_page.html',
                            error=404,
-                           issue="page not found")
+                           issue="Page not found")
 
 
 @app.errorhandler(400)
 def bad_request(error):
     return render_template('error_page.html',
                            error=400,
-                           issue="bad request")
+                           issue="Bad request")
 
 
 @app.errorhandler(500)
-def bad_request(error):
+def internal_server_error(error):
     return render_template('error_page.html',
                            error=500,
                            issue="Internal server error")
