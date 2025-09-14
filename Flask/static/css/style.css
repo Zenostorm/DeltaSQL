@@ -44,7 +44,7 @@ hr {
     background-color: black;
 }
 
-/**HOMEPAGE PLAY BUTTON**/
+/**HOME PAGE BUTTON STYLES**/
 .play-button {
     color: white;
     background-color: black;
@@ -59,6 +59,34 @@ hr {
 
 .play-button:hover {
     background-color: #353535;
+}
+
+.right {
+    float: right;
+    margin: auto 4vw auto auto;
+}
+
+.login-button {
+    color: #6865CF;
+    background-color: #32164b;
+    font-size: 1.5vw;
+    padding: 1vw 2vw 1vw 2vw;
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 1vw;
+    font-family: 'Bungee';
+}
+
+.login-button:hover {
+    color: #6865CF;
+    background-color: #3f1e5c;
+    font-size: 1.5vw;
+    align-self: right;
+    padding: 1vw 2vw 1vw 2vw;
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 1vw;
+    font-family: 'Bungee';
 }
 
 /**VIDEO PLAYER STYLES**/
@@ -359,7 +387,7 @@ h7 {
 h8 {
     color: red;
     font-size: 1.6vw;
-    margin-left: 3vw;
+    margin: 0 0 0 3vw;
     font-family: 'Raleway';
 }
 

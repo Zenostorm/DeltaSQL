@@ -7,6 +7,10 @@
 
 {% include 'partials/searchbar.html' %}
 
+{% if admin %}
+<h4>Admin type shi</h4>
+{% endif %}
+
 <!-- check if dictionary values are empty, store has_items check as a namespace -->
 {% set ns = namespace(has_items=false) %}
 {% for category, items in grouped_items.items() %}

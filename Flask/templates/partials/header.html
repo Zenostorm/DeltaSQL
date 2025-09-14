@@ -1,9 +1,25 @@
 <div class="header">
     <link href='https://fonts.googleapis.com/css?family=Bungee' rel='stylesheet'>
+
+    <!--Logo is a link for the home page-->
     <a href="{{ url_for('home') }}">
         <img src="/static/images/logo.png" class="logo">
     </a>
+
+    <!--Header title for website-->
     <h1>Project Delta <span class="purple">Wiki</span></h1>
+    
+    <!--Check for admin bool, then display either login or logout button-->
+    {% if session.get("admin") == False %}
+        <div class="right">
+            <a href="{{ url_for('login') }}" class="login-button">Login</a>
+        </div>
+    {% elif session.get("admin") == True %}
+        <div class="right">
+            <a href="{{ url_for('logout') }}" class="login-button">Logout</a>
+        </div>
+    {% endif %}
 </div>
 
+<!--Always include navbar in header-->
 {% include 'partials/navbar.html' %}

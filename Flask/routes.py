@@ -1,14 +1,12 @@
-from flask import Flask, render_template, request, abort
+from flask import Flask, render_template, request, abort, session
 from math import ceil, floor
 import sqlite3
 import routes_content
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
 DATABASE = "delta.db"
-
-login_message = ""
-admin = False
+app.secret_key = "tGmesA3v77abYK3Y1UkUMlWJny6KAA"
 
 
 # REQUESTS
@@ -32,13 +30,16 @@ def home():
 
 @app.route("/login")  # page for the admin login
 def login():
-    global login_message  # login_message used by loginregister route
-    current_login_message = login_message  # the displayed login message
-    login_message = ""
+    # get login message then clear it
+    current_login_message = session.pop("login_message", "")
+
+    # if user is already logged in, return to home page
+    if session.get("admin"):
+        return app.redirect("/")
 
     return render_template("login.html",
                            login_message=current_login_message,
-                           admin=admin,
+                           admin=session.get("admin", False),
                            user_max_length=routes_content.user_max_length,
                            pass_max_length=routes_content.pass_max_length,
                            title='login')
@@ -49,22 +50,21 @@ def loginregister():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
-    global login_message, admin  # admin bool
     success = False  # success condition for login
     userid = 0
     username = request.form.get("username")  # request username
     password = request.form.get("password")  # request password
 
     if not username or not password:
-        login_message = routes_content.login_failure
+        session["login_message"] = routes_content.login_failure
         return app.redirect("/login")
 
     if len(username) > routes_content.user_max_length:
-        login_message = routes_content.user_too_long
+        session["login_message"] = routes_content.user_too_long
         return app.redirect("/login")
 
     if len(password) > routes_content.pass_max_length:
-        login_message = routes_content.pass_too_long
+        session["login_message"] = routes_content.pass_too_long
         return app.redirect("/login")
 
     cur.execute("SELECT id, username FROM users")
@@ -81,19 +81,27 @@ def loginregister():
         stored_hash = cur.fetchone()
         print(stored_hash)
         if check_password_hash(stored_hash[0], password):
-            admin = True
-            login_message = routes_content.login_success
+            session["admin"] = True
+            session["login_message"] = routes_content.login_success
             success = True
 
     if not success:
-        login_message = routes_content.login_failure
+        session["admin"] = False
+        session["login_message"] = routes_content.login_failure
     return app.redirect("/login")
 
 
-@app.route("/contributors")
+@app.route("/logout")  # replaces admin session to false
+def logout():
+    session["admin"] = False
+
+    # redirect to homepage
+    return app.redirect("/")
+
+
+@app.route("/contributors")  # list of people who helped me gather data
 def contributors():
-    # this route is found in the footer of the website, 
-    # it is a list of people who helped me gather data for this website
+    # this route is found in the footer of the website
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
@@ -576,6 +584,13 @@ def key(id):
 
     conn.close()
     return render_template('detail/key.html', key=results, title=results[1])
+
+
+# ADMIN ROUTES
+@app.route("/admin-weapons", methods=["GET", "POST"])
+def admin_weapons():
+    search_query = request.args.get('search', '')
+    return render_template('admin_weapons.html')
 
 
 # ERROR ROUTES
