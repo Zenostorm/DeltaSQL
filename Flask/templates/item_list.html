@@ -7,8 +7,8 @@
 
 {% include 'partials/searchbar.html' %}
 
-{% if admin %}
-<h4>Admin type shi</h4>
+{% if session.get("admin") %}
+<h4>Admin check</h4>
 {% endif %}
 
 <!-- check if dictionary values are empty, store has_items check as a namespace -->

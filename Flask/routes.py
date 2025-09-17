@@ -10,12 +10,13 @@ app.secret_key = "tGmesA3v77abYK3Y1UkUMlWJny6KAA"
 
 
 # REQUESTS
-def index_range_handler(results):
+def index_range_handler(results):  # call for any dynamic route that uses ID
     if not results:
-        abort(404)
+        abort(404)  # if index doesn't exist, abort(404) instead of crashing
 
 
 def searchbar_length_handler(search, page):
+    # failsafe if searchbar is tampered with inspect tool
     if len(search) < routes_content.search_min_length:
         abort(400)
     if len(search) > routes_content.search_max_length:
@@ -23,7 +24,7 @@ def searchbar_length_handler(search, page):
 
 
 # GENERAL ROUTES
-@app.route("/")
+@app.route("/")  # home route
 def home():
     return render_template('home.html', title="Home")
 
@@ -50,12 +51,12 @@ def loginregister():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
-    success = False  # success condition for login
+    success = False  # success bool for login
     userid = 0
     username = request.form.get("username")  # request username
     password = request.form.get("password")  # request password
 
-    if not username or not password:
+    if not username or not password:  # check if user inputted anything
         session["login_message"] = routes_content.login_failure
         return app.redirect("/login")
 
@@ -69,7 +70,7 @@ def loginregister():
 
     cur.execute("SELECT id, username FROM users")
     userdata = cur.fetchall()
-    for user in userdata:
+    for user in userdata:  # check if user exists under inputted username
         if username == user[1]:
             success = True
             userid = user[0]
@@ -77,16 +78,18 @@ def loginregister():
             break
     if success:
         success = False
+        # fetch and store password hash
         cur.execute("SELECT passwordhash FROM users WHERE id = ?", (userid,))
         stored_hash = cur.fetchone()
         print(stored_hash)
+        # compare hashes to confirm/deny login
         if check_password_hash(stored_hash[0], password):
             session["admin"] = True
             session["login_message"] = routes_content.login_success
             success = True
 
     if not success:
-        session["admin"] = False
+        session["admin"] = False  # ensure admin session is false
         session["login_message"] = routes_content.login_failure
     return app.redirect("/login")
 
@@ -94,25 +97,22 @@ def loginregister():
 @app.route("/logout")  # replaces admin session to false
 def logout():
     session["admin"] = False
-
-    # redirect to homepage
-    return app.redirect("/")
+    return app.redirect("/")  # redirect to homepage
 
 
 @app.route("/contributors")  # list of people who helped me gather data
 def contributors():
-    # this route is found in the footer of the website
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
     cur.execute("SELECT name, description, image FROM contributors")
-    contributors = cur.fetchall()  # fetch all contributors
+    contributors = cur.fetchall()
 
     conn.close()
     return render_template('contributors.html', contributors=contributors)
 
 
-@app.route("/faq", methods=["GET", "POST"])
+@app.route("/faq", methods=["GET", "POST"])  # frequently asked questions page
 def faq():
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
@@ -179,7 +179,7 @@ def item_category_list(resource):
     # fetch information from tables
     if categories[0] != "generic":
         for category in categories:  # if there are categories
-            if search_query:  # check for search, if none just pull everything
+            if search_query:  # check for search
                 cur.execute(
                     f"SELECT id, name, description, image, type "
                     f"FROM {table} "
@@ -187,7 +187,7 @@ def item_category_list(resource):
                     "ORDER BY id",
                     ('%' + search_query + '%', category)
                 )
-            else:
+            else:  # if no search just fetch all
                 cur.execute(
                     f"SELECT id, name, description, image, type "
                     f"FROM {table} "
@@ -197,7 +197,7 @@ def item_category_list(resource):
                 )
             items_by_type[category] = cur.fetchall()
     else:  # if there are no categories
-        if search_query:  # check for search, if none just pull everything
+        if search_query:  # check for search
             cur.execute(
                 f"SELECT id, name, description, image "
                 f"FROM {table} "
@@ -205,7 +205,7 @@ def item_category_list(resource):
                 "ORDER BY id",
                 ('%' + search_query + '%',)
             )
-        else:
+        else:  # if no search just fetch all
             cur.execute(
                 f"SELECT id, name, description, image "
                 f"FROM {table} "
@@ -234,10 +234,10 @@ def item_category_list(resource):
     )
 
 
-@app.route("/weapon/<int:id>")
+@app.route("/weapon/<int:id>")  # route for guns
 def weapon(id):
     conn = sqlite3.connect('delta.db')
-    cur = conn.cursor()  # and fetch caliber name from calibers table.
+    cur = conn.cursor()  # fetch caliber name based on caliber id
     cur.execute('''SELECT
                 weapons.id,
                 weapons.name,
@@ -254,42 +254,54 @@ def weapon(id):
                 WHERE weapons.id = ?''', (id,))
     results = cur.fetchone()
 
-    # check for list index out of range error
-    index_range_handler(results)
+    index_range_handler(results)  # check for list index out of range error
 
     # fetch compatible optics
-    cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
-                SELECT attachment_id FROM weapon_attachments WHERE weapon_id = ?) AND type = ?''', (id, "Optic"))
+    cur.execute("SELECT id, name, image FROM attachments "
+                "WHERE id IN (SELECT attachment_id FROM weapon_attachments "
+                "WHERE weapon_id = ?) "
+                "AND type = ?", (id, "Optic"))
     optics = cur.fetchall()
 
     # fetch compatible muzzles
-    cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
-                SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Muzzle"))
+    cur.execute("SELECT id, name, image FROM attachments "
+                "WHERE id IN (SELECT attachment_id FROM weapon_attachments "
+                "WHERE weapon_id = ?) "
+                "AND type = ?", (id, "Muzzle"))
     muzzles = cur.fetchall()
 
     # fetch compatible extras
-    cur.execute('''SELECT id, name, image FROM attachments WHERE id IN (
-                SELECT attachment_id FROM weapon_attachments where weapon_id = ?) AND type = ?''', (id, "Extra"))
+    cur.execute("SELECT id, name, image FROM attachments "
+                "WHERE id IN (SELECT attachment_id FROM weapon_attachments "
+                "WHERE weapon_id = ?) "
+                "AND type = ?", (id, "Extra"))
     extras = cur.fetchall()
 
     # fetch compatible  magazines
-    cur.execute('''SELECT id, name, image FROM magazines WHERE id IN (
-                SELECT magazine_id FROM weapon_magazines where weapon_id = ?)''', (id,))
+    cur.execute("SELECT id, name, image FROM magazines "
+                "WHERE id IN (SELECT magazine_id FROM weapon_magazines "
+                "WHERE weapon_id = ?)", (id,))
     magazines = cur.fetchall()
 
     conn.close()
-    return render_template('detail/weapon.html', weapon=results, optics=optics, muzzles=muzzles, extras=extras, magazines=magazines, title=results[1])
+    return render_template('detail/weapon.html',
+                           weapon=results,
+                           optics=optics,
+                           muzzles=muzzles,
+                           extras=extras,
+                           magazines=magazines,
+                           title=results[1])
 
 
-@app.route("/ammo/<int:id>")
+@app.route("/ammo/<int:id>")  # route for ammunition
 def ammo(id):
     helmet_ballistics = {}
     visor_ballistics = {}
     rig_ballistics = {}
-    num = 0
+    num = 0  # used for iterating through tables
 
     conn = sqlite3.connect('delta.db')
-    cur = conn.cursor()
+    cur = conn.cursor()  # fetch caliber name based on caliber id
     cur.execute("SELECT ammunition.id, "
                 "calibers.name AS caliber_id, "
                 "ammunition.name, "
@@ -303,32 +315,43 @@ def ammo(id):
                 "WHERE ammunition.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
-                SELECT weapon_id FROM weapon_ammo where ammo_id = ?)''', (id,))
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible weapons
+    cur.execute("SELECT id, name, image FROM weapons "
+                "WHERE id IN (SELECT weapon_id FROM weapon_ammo "
+                "WHERE ammo_id = ?)", (id,))
     weapons = cur.fetchall()
 
     # pull protection from helmets
-    cur = conn.cursor()
     cur.execute('SELECT ballistic, name, image, id FROM helmets')
     helmets = cur.fetchall()
 
-    # calculate damage against helmets, then add to helmet_ballistics dictionary
+    # calculate damage against armors
+    # true damage = damage * (penetration / protection)
+    # store name of armor as key
+    # store calculated damage, image, shots to kill, and armor ID
     num = 0
-    # iterate and add each helmet as a key
     for helmet in helmets:
-        # if penetration is higher than protection, add raw damage without using calculation
+        # if penetration more than protection, use damage without calculation
         if results[5] < helmets[num][0]:
-            helmet_ballistics[helmets[num][1]] = floor(2 * results[4] * results[5] / helmets[num][0]), helmets[num][2], ceil(50 / floor(results[4] * results[5] / helmets[num][0])), helmets[num][3]
+            helmet_ballistics[helmets[num][1]] = floor(
+                2 * results[4] * results[5] / helmets[num][0]),
+            helmets[num][2],
+            ceil(50 / floor(results[4] * results[5] / helmets[num][0])),
+            helmets[num][3]
         else:
-            helmet_ballistics[helmets[num][1]] = 2 * results[4], helmets[num][2], ceil(50 / (results[4])), helmets[num][3]
+            helmet_ballistics[helmets[num][1]] = 2 * results[4],
+            helmets[num][2],
+            ceil(50 / (results[4])),
+            helmets[num][3]
         num += 1
 
     # pull protection from visors
-    cur = conn.cursor()
     cur.execute('SELECT ballistic, name, image, id FROM visors')
     visors = cur.fetchall()
 
-    # calculate damage against visors, then add to visor_ballistics dictionary
+    # calculate damage against visors
     num = 0
     for visor in visors:
         if results[5] < visors[num][0]:
@@ -342,7 +365,7 @@ def ammo(id):
     cur.execute('SELECT ballistic, name, image, id FROM chest_rigs')
     rigs = cur.fetchall()
 
-    # rig damage function
+    # calculate damage against rigs
     num = 0
     for rig in rigs:
         if results[5] < rigs[num][0]:
@@ -361,30 +384,39 @@ def ammo(id):
                            title=results[1])
 
 
-@app.route("/part/<int:id>")
+@app.route("/part/<int:id>")  # route for gun parts
 def part(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM parts WHERE parts.id = ?''', (id,))
+    cur.execute("SELECT * FROM parts WHERE parts.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
-    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
-                SELECT weapon_id FROM weapon_parts where part_id = ?)''', (id,))
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible weapons
+    cur.execute("SELECT id, name, image FROM weapons "
+                "WHERE id IN (SELECT weapon_id FROM weapon_parts "
+                "WHERE part_id = ?)", (id,))
     weapons = cur.fetchall()
     print(weapons)
     conn.close()
-    return render_template('detail/part.html', part=results, weapons=weapons, title=results[1])
+
+    return render_template('detail/part.html',
+                           part=results,
+                           weapons=weapons,
+                           title=results[1])
 
 
-@app.route("/attachment/<int:id>")
+@app.route("/attachment/<int:id>")  # route for attachments
 def attachment(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM attachments WHERE attachments.id = ?''', (id,))
+    cur.execute("SELECT * FROM attachments WHERE attachments.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible weapons
     cur.execute("SELECT id, name, image "
                 "FROM weapons WHERE id "
                 "IN (SELECT weapon_id "
@@ -392,109 +424,158 @@ def attachment(id):
                 (id,))
     weapons = cur.fetchall()
     conn.close()
-    return render_template('detail/attachment.html', attachment=results, weapons=weapons, title=results[1])
+
+    return render_template('detail/attachment.html',
+                           attachment=results,
+                           weapons=weapons,
+                           title=results[1])
 
 
-@app.route("/magazine/<int:id>")
+@app.route("/magazine/<int:id>")  # route for magazines
 def magazine(id):
     conn = sqlite3.connect('delta.db')
-    cur = conn.cursor()
-    cur.execute('''SELECT
-    magazines.id,
-    magazines.name,
-    calibers.name AS caliber_name,
-    magazines.capacity,
-    magazines.recoil_h,
-    magazines.recoil_v,
-    magazines.mobility,
-    magazines.description,
-    magazines.image
-FROM magazines
-JOIN calibers ON magazines.caliber_id = calibers.id
-WHERE magazines.id = ?''', (id,))
+    cur = conn.cursor()  # fetch caliber name based on caliber id
+    cur.execute("SELECT "
+                "magazines.id, "
+                "magazines.name, "
+                "calibers.name AS caliber_name, "
+                "magazines.capacity, "
+                "magazines.recoil_h, "
+                "magazines.recoil_v, "
+                "magazines.mobility, "
+                "magazines.description, "
+                "magazines.image "
+                "FROM magazines "
+                "JOIN calibers ON magazines.caliber_id = calibers.id "
+                "WHERE magazines.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
-    cur.execute('''SELECT id, name, image FROM weapons WHERE id IN (
-                SELECT weapon_id FROM weapon_magazines where magazine_id = ?)''', (id,))
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible weapons
+    cur.execute("SELECT id, name, image FROM weapons "
+                "WHERE id IN (SELECT weapon_id FROM weapon_magazines "
+                "WHERE magazine_id = ?)", (id,))
     weapons = cur.fetchall()
     conn.close()
-    return render_template('detail/magazine.html', magazine=results, weapons=weapons, title=results[1])
+
+    return render_template('detail/magazine.html',
+                           magazine=results,
+                           weapons=weapons,
+                           title=results[1])
 
 
-@app.route("/helmet/<int:id>")
+@app.route("/helmet/<int:id>")  # route for helmets
 def helmet(id):
     ballistics = {}
-    num = 0
+    num = 0  # used to iterate through tables
 
     conn = sqlite3.connect('delta.db')
+    # pull helmets data
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM helmets WHERE helmets.id = ?''', (id,))
+    cur.execute("SELECT * FROM helmets WHERE helmets.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
-    cur.execute('''SELECT id, name, image FROM visors WHERE id IN (
-                SELECT visor_id FROM helmet_attachments where helmet_id = ?)''', (id,))
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible visors
+    cur.execute("SELECT id, name, image FROM visors "
+                "WHERE id IN (SELECT visor_id FROM helmet_attachments "
+                "WHERE helmet_id = ?)", (id,))
     attachments = cur.fetchall()
 
     # pull damage and piercing from ammunition
-    cur = conn.cursor()
     cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
-    # calculate damage and add to a dictionary
+    # calculate damage against different ammunition
+    # true damage = damage * (penetration / protection)
+    # store name of ammo as key
+    # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
-        else:
-            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
+            ballistics[ammunition[num][2]] = floor(
+                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+            ammunition[num][3],
+            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+            ammunition[num][4]
+        else:  # if penetration > protection, store damage without calculation
+            ballistics[ammunition[num][2]] = int(
+                2 * ammunition[num][0]),
+            ammunition[num][3],
+            ceil(50 / ammunition[num][0]),
+            ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('detail/helmet.html', helmet=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/helmet.html',
+                           helmet=results,
+                           attachments=attachments,
+                           ammunition=ammunition,
+                           ballistics=ballistics,
+                           title=results[1])
 
 
-@app.route("/rig/<int:id>")
+@app.route("/rig/<int:id>")  # route for chest rigs
 def rig(id):
     ballistics = {}
     num = 0
 
     conn = sqlite3.connect('delta.db')
-    # pull chest rig data
+    # pull chest rigs data
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM chest_rigs WHERE chest_rigs.id = ?''', (id,))
+    cur.execute("SELECT * FROM chest_rigs WHERE chest_rigs.id = ?", (id,))
     results = cur.fetchall()[0]
 
+    index_range_handler(results)  # check for list index out of range error
+
     # pull damage and piercing from ammunition
-    cur = conn.cursor()
     cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
-    # calculate damage and add to a dictionary
+    # calculate damage against different ammunition
+    # true damage = damage * (penetration / protection)
+    # store name of ammo as key
+    # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
-        else:
-            ballistics[ammunition[num][2]] = int(ammunition[num][0]), ammunition[num][3], ceil(100 / ammunition[num][0]), ammunition[num][4]
+            ballistics[ammunition[num][2]] = floor(
+                ammunition[num][0] * ammunition[num][1] / results[4]),
+            ammunition[num][3],
+            ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+            ammunition[num][4]
+        else:  # if penetration > protection, store damage without calculation
+            ballistics[ammunition[num][2]] = int(ammunition[num][0]),
+            ammunition[num][3],
+            ceil(100 / ammunition[num][0]),
+            ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('detail/rig.html', rig=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/rig.html',
+                           rig=results,
+                           ammunition=ammunition,
+                           ballistics=ballistics,
+                           title=results[1])
 
 
-@app.route("/visor/<int:id>")
+@app.route("/visor/<int:id>")  # route for face shields/visors
 def visor(id):
     ballistics = {}
-    num = 0
+    num = 0  # used to iterate through tables
 
     conn = sqlite3.connect('delta.db')
+    # pull visor data
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM visors WHERE visors.id = ?''', (id,))
+    cur.execute("SELECT * FROM visors WHERE visors.id = ?", (id,))
     results = cur.fetchall()[0]
 
-    cur = conn.cursor()
-    cur.execute('''SELECT id, name, image FROM helmets WHERE id IN (
-                SELECT helmet_id FROM helmet_attachments where visor_id = ?)''', (id,))
+    index_range_handler(results)  # check for list index out of range error
+
+    # fetch compatible helmets
+    cur.execute("SELECT id, name, image FROM helmets "
+                "WHERE id IN (SELECT helmet_id FROM helmet_attachments "
+                "WHERE visor_id = ?)", (id,))
     attachments = cur.fetchall()
 
     # pull damage and piercing from ammunition
@@ -502,19 +583,35 @@ def visor(id):
     cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
-    # calculate damage and add to a dictionary
+    # calculate damage against different ammunition
+    # true damage = damage * (penetration / protection)
+    # store name of ammo as key
+    # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
+            ballistics[ammunition[num][2]] = floor(
+                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+            ammunition[num][3],
+            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+            ammunition[num][4]
         else:
-            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
+            ballistics[ammunition[num][2]] = int(
+                2 * ammunition[num][0]),
+            ammunition[num][3],
+            ceil(50 / ammunition[num][0]),
+            ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('detail/visor.html', visor=results, attachments=attachments, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/visor.html',
+                           visor=results,
+                           attachments=attachments,
+                           ammunition=ammunition,
+                           ballistics=ballistics,
+                           title=results[1])
 
 
-@app.route("/leg_armor/<int:id>")
+@app.route("/leg_armor/<int:id>")  # route for leg armor
 def leg_armor(id):
     ballistics = {}
     num = 0
@@ -522,72 +619,105 @@ def leg_armor(id):
     conn = sqlite3.connect('delta.db')
     # pull leg armor data
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM leg_armor WHERE leg_armor.id = ?''', (id,))
+    cur.execute("SELECT * FROM leg_armor WHERE leg_armor.id = ?", (id,))
     results = cur.fetchall()[0]
+
+    index_range_handler(results)  # check for list index out of range error
 
     # pull damage and piercing from ammunition
     cur = conn.cursor()
     cur.execute('SELECT damage, penetration, name, image, id FROM ammunition')
     ammunition = cur.fetchall()
 
-    # calculate damage and add to a dictionary
+    # calculate damage against different ammunition
+    # true damage = damage * (penetration / protection)
+    # store name of ammo as key
+    # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]), ammunition[num][3], ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])), ammunition[num][4]
-        else:
-            ballistics[ammunition[num][2]] = int(2 * ammunition[num][0]), ammunition[num][3], ceil(50 / ammunition[num][0]), ammunition[num][4]
+            ballistics[ammunition[num][2]] = floor(
+                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+            ammunition[num][3],
+            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+            ammunition[num][4]
+        else:  # if penetration > protection, store damage without calculation
+            ballistics[ammunition[num][2]] = int(
+                2 * ammunition[num][0]),
+            ammunition[num][3],
+            ceil(50 / ammunition[num][0]),
+            ammunition[num][4]
         num += 1
 
     conn.close()
-    return render_template('detail/leg_armor.html', armor=results, ammunition=ammunition, ballistics=ballistics, title=results[1])
+    return render_template('detail/leg_armor.html',
+                           armor=results,
+                           ammunition=ammunition,
+                           ballistics=ballistics,
+                           title=results[1])
 
 
-@app.route("/wearable/<int:id>")
+@app.route("/wearable/<int:id>")  # route for wearables
 def wearable(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM wearables WHERE id = ?''', (id,))
+    cur.execute("SELECT * FROM wearables WHERE id = ?", (id,))
     results = cur.fetchall()[0]
 
+    index_range_handler(results)  # check for list index out of range error
+
     conn.close()
-    return render_template('detail/wearable.html', wearable=results, title=results[1])
+    return render_template('detail/wearable.html',
+                           wearable=results,
+                           title=results[1])
 
 
-@app.route("/consumable/<int:id>")
+@app.route("/consumable/<int:id>")  # route for consumables
 def consumable(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM consumables WHERE id = ?''', (id,))
+    cur.execute("SELECT * FROM consumables WHERE id = ?", (id,))
     results = cur.fetchall()[0]
 
+    index_range_handler(results)  # check for list index out of range error
+
     conn.close()
-    return render_template('detail/consumable.html', consumable=results, title=results[1])
+    return render_template('detail/consumable.html',
+                           consumable=results,
+                           title=results[1])
 
 
-@app.route("/junk/<int:id>")
+@app.route("/junk/<int:id>")  # route for junk
 def junk(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM junk WHERE id = ?''', (id,))
+    cur.execute("SELECT * FROM junk WHERE id = ?", (id,))
     results = cur.fetchall()[0]
 
+    index_range_handler(results)  # check for list index out of range error
+
     conn.close()
-    return render_template('detail/junk.html', item=results, title=results[1])
+    return render_template('detail/junk.html',
+                           item=results,
+                           title=results[1])
 
 
-@app.route("/key/<int:id>")
+@app.route("/key/<int:id>")  # route for keys
 def key(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
-    cur.execute('''SELECT * FROM keys WHERE id = ?''', (id,))
+    cur.execute("SELECT * FROM keys WHERE id = ?", (id,))
     results = cur.fetchall()[0]
 
+    index_range_handler(results)  # check for list index out of range error
+
     conn.close()
-    return render_template('detail/key.html', key=results, title=results[1])
+    return render_template('detail/key.html',
+                           key=results,
+                           title=results[1])
 
 
 # ADMIN ROUTES
-@app.route("/admin-weapons", methods=["GET", "POST"])
+@app.route("/admin-weapons", methods=["GET", "POST"])  # add weapons
 def admin_weapons():
     search_query = request.args.get('search', '')
     return render_template('admin_weapons.html')
@@ -606,6 +736,13 @@ def bad_request(error):
     return render_template('error_page.html',
                            error=400,
                            issue="Bad request")
+
+
+@app.errorhandler(414)
+def url_too_long(error):
+    return render_template('error_page.html',
+                           error=414,
+                           issue="URL too long")
 
 
 @app.errorhandler(500)
