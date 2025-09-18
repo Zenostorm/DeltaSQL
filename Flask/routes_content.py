@@ -5,6 +5,8 @@ search_max_length = 100
 user_max_length = 30
 pass_max_length = 100
 
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 # messages
 login_failure = "Incorrect username or password"
 user_too_long = "Username too long"

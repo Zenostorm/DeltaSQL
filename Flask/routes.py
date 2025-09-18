@@ -3,6 +3,8 @@ from math import ceil, floor
 import sqlite3
 import routes_content
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 DATABASE = "delta.db"
@@ -15,17 +17,24 @@ def index_range_handler(results):  # call for any dynamic route that uses ID
         abort(404)  # if index doesn't exist, abort(404) instead of crashing
 
 
-def searchbar_length_handler(search, page):
+def searchbar_length_handler(search):
     # failsafe if searchbar is tampered with inspect tool
     if len(search) < routes_content.search_min_length:
         abort(400)
     if len(search) > routes_content.search_max_length:
         abort(400)
+    search = ""
 
+
+def allowed_file(filename):  # check form for correct filetype
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() \
+        in routes_content.ALLOWED_EXTENSIONS
 
 # GENERAL ROUTES
 @app.route("/")  # home route
 def home():
+    if "admin" not in session:  # instantiate admin session
+        session["admin"] = False
     return render_template('home.html', title="Home")
 
 
@@ -163,6 +172,9 @@ def item_category_list(resource):
     search_query = request.args.get('search', '')
     items_by_type = {}
 
+    if search_query:  # check if search is valid length
+        searchbar_length_handler(search_query)
+
     # fetch columns from table
     cur.execute(f"PRAGMA table_info({table})")
     columns = [row[1] for row in cur.fetchall()]  # row[1] = name of column
@@ -238,20 +250,20 @@ def item_category_list(resource):
 def weapon(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()  # fetch caliber name based on caliber id
-    cur.execute('''SELECT
-                weapons.id,
-                weapons.name,
-                weapons.type,
-                calibers.name AS caliber_name,
-                weapons.fire_mode,
-                weapons.RPM,
-                weapons.durability,
-                weapons.description,
-                weapons.image,
-                weapons.dmg_mult
-                FROM weapons
-                JOIN calibers ON weapons.caliber_id = calibers.id
-                WHERE weapons.id = ?''', (id,))
+    cur.execute("SELECT "
+                "weapons.id, "
+                "weapons.name, "
+                "weapons.type, "
+                "calibers.name AS caliber_name, "
+                "weapons.fire_mode, "
+                "weapons.RPM, "
+                "weapons.durability, "
+                "weapons.description, "
+                "weapons.image, "
+                "weapons.dmg_mult "
+                "FROM weapons "
+                "JOIN calibers ON weapons.caliber_id = calibers.id "
+                "WHERE weapons.id = ?", (id,))
     results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
@@ -313,7 +325,7 @@ def ammo(id):
                 "FROM ammunition "
                 "JOIN calibers ON ammunition.caliber_id = calibers.id "
                 "WHERE ammunition.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -335,16 +347,17 @@ def ammo(id):
     for helmet in helmets:
         # if penetration more than protection, use damage without calculation
         if results[5] < helmets[num][0]:
-            helmet_ballistics[helmets[num][1]] = floor(
-                2 * results[4] * results[5] / helmets[num][0]),
-            helmets[num][2],
-            ceil(50 / floor(results[4] * results[5] / helmets[num][0])),
-            helmets[num][3]
+            helmet_ballistics[helmets[num][1]] = (
+                floor(2 * results[4] * results[5] / helmets[num][0]),
+                helmets[num][2],
+                ceil(50 / floor(results[4] * results[5] / helmets[num][0])),
+                helmets[num][3])
         else:
-            helmet_ballistics[helmets[num][1]] = 2 * results[4],
-            helmets[num][2],
-            ceil(50 / (results[4])),
-            helmets[num][3]
+            helmet_ballistics[helmets[num][1]] = (
+                2 * results[4],
+                helmets[num][2],
+                ceil(50 / (results[4])),
+                helmets[num][3])
         num += 1
 
     # pull protection from visors
@@ -355,9 +368,16 @@ def ammo(id):
     num = 0
     for visor in visors:
         if results[5] < visors[num][0]:
-            visor_ballistics[visors[num][1]] = floor(2 * results[4] * results[5] / visors[num][0]), visors[num][2], ceil(50 / floor(results[4] * results[5] / visors[num][0])), visors[num][3]
+            visor_ballistics[visors[num][1]] = (
+                floor(2 * results[4] * results[5] / visors[num][0]),
+                visors[num][2],
+                ceil(50 / floor(results[4] * results[5] / visors[num][0])),
+                visors[num][3])
         else:
-            visor_ballistics[visors[num][1]] = 2 * results[4], visors[num][2], ceil(50 / results[4]), visors[num][3]
+            visor_ballistics[visors[num][1]] = (
+                2 * results[4], visors[num][2],
+                ceil(50 / results[4]),
+                visors[num][3])
         num += 1
 
     # pull protection from rigs
@@ -369,9 +389,16 @@ def ammo(id):
     num = 0
     for rig in rigs:
         if results[5] < rigs[num][0]:
-            rig_ballistics[rigs[num][1]] = floor(results[4] * results[5] / rigs[num][0]), rigs[num][2], ceil(100 / floor(results[4] * results[5] / rigs[num][0])), rigs[num][3]
+            rig_ballistics[rigs[num][1]] = (
+                floor(results[4] * results[5] / rigs[num][0]),
+                rigs[num][2],
+                ceil(100 / floor(results[4] * results[5] / rigs[num][0])),
+                rigs[num][3])
         else:
-            rig_ballistics[rigs[num][1]] = results[4], rigs[num][2], ceil(100 / results[4]), rigs[num][3]
+            rig_ballistics[rigs[num][1]] = (
+                results[4], rigs[num][2],
+                ceil(100 / results[4]),
+                rigs[num][3])
         num += 1
 
     conn.close()
@@ -389,7 +416,7 @@ def part(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM parts WHERE parts.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -412,7 +439,7 @@ def attachment(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM attachments WHERE attachments.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -448,7 +475,7 @@ def magazine(id):
                 "FROM magazines "
                 "JOIN calibers ON magazines.caliber_id = calibers.id "
                 "WHERE magazines.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -474,7 +501,7 @@ def helmet(id):
     # pull helmets data
     cur = conn.cursor()
     cur.execute("SELECT * FROM helmets WHERE helmets.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -494,17 +521,17 @@ def helmet(id):
     # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(
-                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-            ammunition[num][3],
-            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+                ammunition[num][3],
+                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+                ammunition[num][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = int(
-                2 * ammunition[num][0]),
-            ammunition[num][3],
-            ceil(50 / ammunition[num][0]),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                int(2 * ammunition[num][0]),
+                ammunition[num][3],
+                ceil(50 / ammunition[num][0]),
+                ammunition[num][4])
         num += 1
 
     conn.close()
@@ -525,7 +552,7 @@ def rig(id):
     # pull chest rigs data
     cur = conn.cursor()
     cur.execute("SELECT * FROM chest_rigs WHERE chest_rigs.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -539,16 +566,17 @@ def rig(id):
     # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(
-                ammunition[num][0] * ammunition[num][1] / results[4]),
-            ammunition[num][3],
-            ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                floor(ammunition[num][0] * ammunition[num][1] / results[4]),
+                ammunition[num][3],
+                ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+                ammunition[num][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = int(ammunition[num][0]),
-            ammunition[num][3],
-            ceil(100 / ammunition[num][0]),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                int(ammunition[num][0]),
+                ammunition[num][3],
+                ceil(100 / ammunition[num][0]),
+                ammunition[num][4])
         num += 1
 
     conn.close()
@@ -568,7 +596,7 @@ def visor(id):
     # pull visor data
     cur = conn.cursor()
     cur.execute("SELECT * FROM visors WHERE visors.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -589,17 +617,17 @@ def visor(id):
     # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(
-                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-            ammunition[num][3],
-            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+                ammunition[num][3],
+                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+                ammunition[num][4])
         else:
-            ballistics[ammunition[num][2]] = int(
-                2 * ammunition[num][0]),
-            ammunition[num][3],
-            ceil(50 / ammunition[num][0]),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                int(2 * ammunition[num][0]),
+                ammunition[num][3],
+                ceil(50 / ammunition[num][0]),
+                ammunition[num][4])
         num += 1
 
     conn.close()
@@ -620,7 +648,7 @@ def leg_armor(id):
     # pull leg armor data
     cur = conn.cursor()
     cur.execute("SELECT * FROM leg_armor WHERE leg_armor.id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -635,17 +663,17 @@ def leg_armor(id):
     # store calculated damage, image, shots to kill, and the ammo's ID
     for ammo in ammunition:
         if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = floor(
-                2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-            ammunition[num][3],
-            ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
+                ammunition[num][3],
+                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
+                ammunition[num][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = int(
-                2 * ammunition[num][0]),
-            ammunition[num][3],
-            ceil(50 / ammunition[num][0]),
-            ammunition[num][4]
+            ballistics[ammunition[num][2]] = (
+                int(2 * ammunition[num][0]),
+                ammunition[num][3],
+                ceil(50 / ammunition[num][0]),
+                ammunition[num][4])
         num += 1
 
     conn.close()
@@ -661,7 +689,7 @@ def wearable(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM wearables WHERE id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -676,7 +704,7 @@ def consumable(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM consumables WHERE id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -691,7 +719,7 @@ def junk(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM junk WHERE id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -706,7 +734,7 @@ def key(id):
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM keys WHERE id = ?", (id,))
-    results = cur.fetchall()[0]
+    results = cur.fetchone()
 
     index_range_handler(results)  # check for list index out of range error
 
@@ -716,11 +744,114 @@ def key(id):
                            title=results[1])
 
 
-# ADMIN ROUTES
-@app.route("/admin-weapons", methods=["GET", "POST"])  # add weapons
-def admin_weapons():
-    search_query = request.args.get('search', '')
-    return render_template('admin_weapons.html')
+@app.route("/admin/add-weapon", methods=["GET", "POST"])  # add weapons to db
+def add_weapon():
+    if not session.get("admin"):
+        return app.redirect("/")
+
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    # generate new weapon ID
+    cur.execute("SELECT id FROM weapons")
+    weapon_id = cur.fetchall()[-1][0] + 1
+
+    if request.method == "POST":
+        # request general data
+        name = request.form.get("name")
+        weapon_type = request.form.get("weapon_type")
+        caliber_id = request.form.get("calibers")
+        fire_mode = request.form.get("fire_mode")
+        rpm = request.form.get("RPM")
+        durability = request.form.get("durability")
+        dmg_mult = request.form.get("dmg_mult")
+        description = (request.form.get("description") or "").replace("\n", " ")
+
+        # fetch checkbox results
+        selected_parts = request.form.getlist("parts")
+        selected_attachments = request.form.getlist("attachments")
+
+        # request image
+        image_file = request.files.get("image")
+        image_path = None
+        if image_file and allowed_file(image_file.filename):
+            os.makedirs('static/images/ballistics/weapons', exist_ok=True)
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join('static/images/ballistics/weapons', filename)
+            image_file.save(image_path)
+
+        # insert new weapon
+        cur.execute(
+            "INSERT INTO weapons "
+            "(name, "
+            "type, "
+            "caliber_id, "
+            "fire_mode, "
+            "rpm, "
+            "durability, "
+            "dmg_mult, "
+            "description) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (name,
+             weapon_type,
+             caliber_id,
+             fire_mode,
+             rpm,
+             durability,
+             dmg_mult,
+             description),
+        )
+        conn.commit()
+
+        weapon_id = cur.lastrowid
+
+        # insert new part IDs into bridging table
+        for part_id in selected_parts:
+            cur.execute(
+                "INSERT INTO weapon_parts (weapon_id, part_id) "
+                "VALUES (?, ?)",
+                (weapon_id, part_id)
+            )
+
+        # insert new attachment IDs into bridging table
+        for attachment_id in selected_attachments:
+            cur.execute(
+                "INSERT INTO weapon_attachments (weapon_id, attachment_id) "
+                "VALUES (?, ?)",
+                (weapon_id, attachment_id)
+            )
+
+        conn.close()
+        return app.redirect("/items/weapons")
+
+    # fetch weapon_types for dropdown
+    cur.execute("SELECT type FROM weapon_types")
+    weapon_types = [row[0] for row in cur.fetchall()]
+
+    # fetch calibers for dropdown
+    cur.execute("SELECT id, name FROM calibers")
+    calibers = cur.fetchall()
+
+    # fetch parts for dropdown
+    cur.execute("SELECT id, name FROM parts")
+    parts = cur.fetchall()
+
+    # fetch parts for checkboxes
+    cur.execute("SELECT id, name, type FROM parts")
+    parts = cur.fetchall()
+
+    # fetch attachments for checkboxes
+    cur.execute("SELECT id, name, type FROM attachments")
+    attachments = cur.fetchall()
+    print(parts)
+
+    return render_template("admin/add_weapon.html",
+                           weapon_id=weapon_id,
+                           weapon_types=weapon_types,
+                           calibers=calibers,
+                           parts=parts,
+                           attachments=attachments,
+                           title="")
 
 
 # ERROR ROUTES
@@ -735,7 +866,7 @@ def page_not_found(error):
 def bad_request(error):
     return render_template('error_page.html',
                            error=400,
-                           issue="Bad request")
+                           issue="Bad request, try a different search")
 
 
 @app.errorhandler(414)
