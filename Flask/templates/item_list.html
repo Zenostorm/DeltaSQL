@@ -7,14 +7,6 @@
 
 {% include 'partials/searchbar.html' %}
 
-{% if session.get("admin") %}
-    <h2>Admin controls</h2>
-    <hr>
-    {% if request.path == '/items/weapons' %}
-        <a href="{{ url_for('add_weapon') }}" class="play-button">Add weapon</a>
-    {% endif %}
-{% endif %}
-
 <!-- check if category has items, store has_items check as a namespace -->
 {% set ns = namespace(has_items=false) %}
 {% for category, items in grouped_items.items() %}

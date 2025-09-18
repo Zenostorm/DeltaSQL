@@ -308,7 +308,6 @@ def ammo(id):
     helmet_ballistics = {}
     visor_ballistics = {}
     rig_ballistics = {}
-    num = 0  # used for iterating through tables
 
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()  # fetch caliber name based on caliber id
@@ -341,42 +340,38 @@ def ammo(id):
     # true damage = damage * (penetration / protection)
     # store name of armor as key
     # store calculated damage, image, shots to kill, and armor ID
-    num = 0
-    for helmet in helmets:
+    for helmet in range(len(helmets)):
         # if penetration more than protection, use damage without calculation
-        if results[5] < helmets[num][0]:
-            helmet_ballistics[helmets[num][1]] = (
-                floor(2 * results[4] * results[5] / helmets[num][0]),
-                helmets[num][2],
-                ceil(50 / floor(results[4] * results[5] / helmets[num][0])),
-                helmets[num][3])
+        if results[5] < helmets[helmet][0]:
+            helmet_ballistics[helmets[helmet][1]] = (
+                floor(2 * results[4] * results[5] / helmets[helmet][0]),
+                helmets[helmet][2],
+                ceil(50 / floor(results[4] * results[5] / helmets[helmet][0])),
+                helmets[helmet][3])
         else:
-            helmet_ballistics[helmets[num][1]] = (
+            helmet_ballistics[helmets[helmet][1]] = (
                 2 * results[4],
-                helmets[num][2],
+                helmets[helmet][2],
                 ceil(50 / (results[4])),
-                helmets[num][3])
-        num += 1
+                helmets[helmet][3])
 
     # pull protection from visors
     cur.execute('SELECT ballistic, name, image, id FROM visors')
     visors = cur.fetchall()
 
     # calculate damage against visors
-    num = 0
-    for visor in visors:
-        if results[5] < visors[num][0]:
-            visor_ballistics[visors[num][1]] = (
-                floor(2 * results[4] * results[5] / visors[num][0]),
-                visors[num][2],
-                ceil(50 / floor(results[4] * results[5] / visors[num][0])),
-                visors[num][3])
+    for visor in range(len(visors)):
+        if results[5] < visors[visor][0]:
+            visor_ballistics[visors[visor][1]] = (
+                floor(2 * results[4] * results[5] / visors[visor][0]),
+                visors[visor][2],
+                ceil(50 / floor(results[4] * results[5] / visors[visor][0])),
+                visors[visor][3])
         else:
-            visor_ballistics[visors[num][1]] = (
-                2 * results[4], visors[num][2],
+            visor_ballistics[visors[visor][1]] = (
+                2 * results[4], visors[visor][2],
                 ceil(50 / results[4]),
-                visors[num][3])
-        num += 1
+                visors[visor][3])
 
     # pull protection from rigs
     cur = conn.cursor()
@@ -384,20 +379,18 @@ def ammo(id):
     rigs = cur.fetchall()
 
     # calculate damage against rigs
-    num = 0
-    for rig in rigs:
-        if results[5] < rigs[num][0]:
-            rig_ballistics[rigs[num][1]] = (
-                floor(results[4] * results[5] / rigs[num][0]),
-                rigs[num][2],
-                ceil(100 / floor(results[4] * results[5] / rigs[num][0])),
-                rigs[num][3])
+    for rig in range(len(rigs)):
+        if results[5] < rigs[rig][0]:
+            rig_ballistics[rigs[rig][1]] = (
+                floor(results[4] * results[5] / rigs[rig][0]),
+                rigs[rig][2],
+                ceil(100 / floor(results[4] * results[5] / rigs[rig][0])),
+                rigs[rig][3])
         else:
-            rig_ballistics[rigs[num][1]] = (
-                results[4], rigs[num][2],
+            rig_ballistics[rigs[rig][1]] = (
+                results[4], rigs[rig][2],
                 ceil(100 / results[4]),
-                rigs[num][3])
-        num += 1
+                rigs[rig][3])
 
     conn.close()
     return render_template('detail/ammo.html',
@@ -493,7 +486,6 @@ def magazine(id):
 @app.route("/helmet/<int:id>")  # route for helmets
 def helmet(id):
     ballistics = {}
-    num = 0  # used to iterate through tables
 
     conn = sqlite3.connect('delta.db')
     # pull helmets data
@@ -517,20 +509,19 @@ def helmet(id):
     # true damage = damage * (penetration / protection)
     # store name of ammo as key
     # store calculated damage, image, shots to kill, and the ammo's ID
-    for ammo in ammunition:
-        if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = (
-                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-                ammunition[num][3],
-                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-                ammunition[num][4])
+    for ammo in range(len(ammunition)):
+        if ammunition[ammo][1] < results[4]:
+            ballistics[ammunition[ammo][2]] = (
+                floor(2 * ammunition[ammo][0] * ammunition[ammo][1] / results[4]),
+                ammunition[ammo][3],
+                ceil(50 / floor(ammunition[ammo][0] * ammunition[ammo][1] / results[4])),
+                ammunition[ammo][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = (
-                int(2 * ammunition[num][0]),
-                ammunition[num][3],
-                ceil(50 / ammunition[num][0]),
-                ammunition[num][4])
-        num += 1
+            ballistics[ammunition[ammo][2]] = (
+                int(2 * ammunition[ammo][0]),
+                ammunition[ammo][3],
+                ceil(50 / ammunition[ammo][0]),
+                ammunition[ammo][4])
 
     conn.close()
     return render_template('detail/helmet.html',
@@ -544,7 +535,6 @@ def helmet(id):
 @app.route("/rig/<int:id>")  # route for chest rigs
 def rig(id):
     ballistics = {}
-    num = 0
 
     conn = sqlite3.connect('delta.db')
     # pull chest rigs data
@@ -562,20 +552,19 @@ def rig(id):
     # true damage = damage * (penetration / protection)
     # store name of ammo as key
     # store calculated damage, image, shots to kill, and the ammo's ID
-    for ammo in ammunition:
-        if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = (
-                floor(ammunition[num][0] * ammunition[num][1] / results[4]),
-                ammunition[num][3],
-                ceil(100 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-                ammunition[num][4])
+    for ammo in range(len(ammunition)):
+        if ammunition[ammo][1] < results[4]:
+            ballistics[ammunition[ammo][2]] = (
+                floor(ammunition[ammo][0] * ammunition[ammo][1] / results[4]),
+                ammunition[ammo][3],
+                ceil(100 / floor(ammunition[ammo][0] * ammunition[ammo][1] / results[4])),
+                ammunition[ammo][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = (
-                int(ammunition[num][0]),
-                ammunition[num][3],
-                ceil(100 / ammunition[num][0]),
-                ammunition[num][4])
-        num += 1
+            ballistics[ammunition[ammo][2]] = (
+                int(ammunition[ammo][0]),
+                ammunition[ammo][3],
+                ceil(100 / ammunition[ammo][0]),
+                ammunition[ammo][4])
 
     conn.close()
     return render_template('detail/rig.html',
@@ -588,7 +577,6 @@ def rig(id):
 @app.route("/visor/<int:id>")  # route for face shields/visors
 def visor(id):
     ballistics = {}
-    num = 0  # used to iterate through tables
 
     conn = sqlite3.connect('delta.db')
     # pull visor data
@@ -613,20 +601,19 @@ def visor(id):
     # true damage = damage * (penetration / protection)
     # store name of ammo as key
     # store calculated damage, image, shots to kill, and the ammo's ID
-    for ammo in ammunition:
-        if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = (
-                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-                ammunition[num][3],
-                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-                ammunition[num][4])
+    for ammo in range(len(ammunition)):
+        if ammunition[ammo][1] < results[4]:
+            ballistics[ammunition[ammo][2]] = (
+                floor(2 * ammunition[ammo][0] * ammunition[ammo][1] / results[4]),
+                ammunition[ammo][3],
+                ceil(50 / floor(ammunition[ammo][0] * ammunition[ammo][1] / results[4])),
+                ammunition[ammo][4])
         else:
-            ballistics[ammunition[num][2]] = (
-                int(2 * ammunition[num][0]),
-                ammunition[num][3],
-                ceil(50 / ammunition[num][0]),
-                ammunition[num][4])
-        num += 1
+            ballistics[ammunition[ammo][2]] = (
+                int(2 * ammunition[ammo][0]),
+                ammunition[ammo][3],
+                ceil(50 / ammunition[ammo][0]),
+                ammunition[ammo][4])
 
     conn.close()
     return render_template('detail/visor.html',
@@ -640,7 +627,6 @@ def visor(id):
 @app.route("/leg_armor/<int:id>")  # route for leg armor
 def leg_armor(id):
     ballistics = {}
-    num = 0
 
     conn = sqlite3.connect('delta.db')
     # pull leg armor data
@@ -659,20 +645,19 @@ def leg_armor(id):
     # true damage = damage * (penetration / protection)
     # store name of ammo as key
     # store calculated damage, image, shots to kill, and the ammo's ID
-    for ammo in ammunition:
-        if ammunition[num][1] < results[4]:
-            ballistics[ammunition[num][2]] = (
-                floor(2 * ammunition[num][0] * ammunition[num][1] / results[4]),
-                ammunition[num][3],
-                ceil(50 / floor(ammunition[num][0] * ammunition[num][1] / results[4])),
-                ammunition[num][4])
+    for ammo in range(len(ammunition)):
+        if ammunition[ammo][1] < results[4]:
+            ballistics[ammunition[ammo][2]] = (
+                floor(2 * ammunition[ammo][0] * ammunition[ammo][1] / results[4]),
+                ammunition[ammo][3],
+                ceil(50 / floor(ammunition[ammo][0] * ammunition[ammo][1] / results[4])),
+                ammunition[ammo][4])
         else:  # if penetration > protection, store damage without calculation
-            ballistics[ammunition[num][2]] = (
-                int(2 * ammunition[num][0]),
-                ammunition[num][3],
-                ceil(50 / ammunition[num][0]),
-                ammunition[num][4])
-        num += 1
+            ballistics[ammunition[ammo][2]] = (
+                int(2 * ammunition[ammo][0]),
+                ammunition[ammo][3],
+                ceil(50 / ammunition[ammo][0]),
+                ammunition[ammo][4])
 
     conn.close()
     return render_template('detail/leg_armor.html',
