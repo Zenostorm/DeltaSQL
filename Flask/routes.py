@@ -3,8 +3,6 @@ from math import ceil, floor
 import sqlite3
 import routes_content
 from werkzeug.security import check_password_hash
-from werkzeug.utils import secure_filename
-import os
 
 app = Flask(__name__)
 DATABASE = "delta.db"
@@ -742,116 +740,6 @@ def key(id):
     return render_template('detail/key.html',
                            key=results,
                            title=results[1])
-
-
-@app.route("/admin/add-weapon", methods=["GET", "POST"])  # add weapons to db
-def add_weapon():
-    if not session.get("admin"):
-        return app.redirect("/")
-
-    conn = sqlite3.connect('delta.db')
-    cur = conn.cursor()
-
-    # generate new weapon ID
-    cur.execute("SELECT id FROM weapons")
-    weapon_id = cur.fetchall()[-1][0] + 1
-
-    if request.method == "POST":
-        # request general data
-        name = request.form.get("name")
-        weapon_type = request.form.get("weapon_type")
-        caliber_id = request.form.get("calibers")
-        fire_mode = request.form.get("fire_mode")
-        rpm = request.form.get("RPM")
-        durability = request.form.get("durability")
-        dmg_mult = request.form.get("dmg_mult")
-        description = (request.form.get("description") or "").replace("\n", " ")
-
-        # fetch checkbox results
-        selected_parts = request.form.getlist("parts")
-        selected_attachments = request.form.getlist("attachments")
-
-        # request image
-        image_file = request.files.get("image")
-        image_path = None
-        if image_file and allowed_file(image_file.filename):
-            os.makedirs('static/images/ballistics/weapons', exist_ok=True)
-            filename = secure_filename(image_file.filename)
-            image_path = os.path.join('static/images/ballistics/weapons', filename)
-            image_file.save(image_path)
-
-        # insert new weapon
-        cur.execute(
-            "INSERT INTO weapons "
-            "(name, "
-            "type, "
-            "caliber_id, "
-            "fire_mode, "
-            "rpm, "
-            "durability, "
-            "dmg_mult, "
-            "description) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            (name,
-             weapon_type,
-             caliber_id,
-             fire_mode,
-             rpm,
-             durability,
-             dmg_mult,
-             description),
-        )
-        conn.commit()
-
-        weapon_id = cur.lastrowid
-
-        # insert new part IDs into bridging table
-        for part_id in selected_parts:
-            cur.execute(
-                "INSERT INTO weapon_parts (weapon_id, part_id) "
-                "VALUES (?, ?)",
-                (weapon_id, part_id)
-            )
-
-        # insert new attachment IDs into bridging table
-        for attachment_id in selected_attachments:
-            cur.execute(
-                "INSERT INTO weapon_attachments (weapon_id, attachment_id) "
-                "VALUES (?, ?)",
-                (weapon_id, attachment_id)
-            )
-
-        conn.close()
-        return app.redirect("/items/weapons")
-
-    # fetch weapon_types for dropdown
-    cur.execute("SELECT type FROM weapon_types")
-    weapon_types = [row[0] for row in cur.fetchall()]
-
-    # fetch calibers for dropdown
-    cur.execute("SELECT id, name FROM calibers")
-    calibers = cur.fetchall()
-
-    # fetch parts for dropdown
-    cur.execute("SELECT id, name FROM parts")
-    parts = cur.fetchall()
-
-    # fetch parts for checkboxes
-    cur.execute("SELECT id, name, type FROM parts")
-    parts = cur.fetchall()
-
-    # fetch attachments for checkboxes
-    cur.execute("SELECT id, name, type FROM attachments")
-    attachments = cur.fetchall()
-    print(parts)
-
-    return render_template("admin/add_weapon.html",
-                           weapon_id=weapon_id,
-                           weapon_types=weapon_types,
-                           calibers=calibers,
-                           parts=parts,
-                           attachments=attachments,
-                           title="")
 
 
 # ERROR ROUTES
