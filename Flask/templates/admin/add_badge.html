@@ -1,0 +1,60 @@
+{% extends "partials/layout.html" %}
+
+{% block content %}
+<h2>Add Badge</h2>
+<hr><br>
+
+<div class="login-box">
+    <form method="POST" enctype="multipart/form-data">
+        <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" required>
+        <br><br>
+
+        <!-- Type -->
+        <label for="type">Type:</label>
+        <input type="text" name="type" id="type" required>
+        <br><br>
+
+        <!-- Requirement -->
+        <label for="requirement">Requirement:</label><br>
+        <textarea name="requirement" id="requirement" rows="4" cols="40" maxlength="150" required></textarea>
+        <br><br>
+
+        <!-- Description -->
+        <label for="description">Description:</label><br>
+        <textarea name="description" id="description" rows="4" cols="40" maxlength="150" required></textarea>
+        <br><br>
+
+        <!-- Image Upload -->
+        <label for="image">Image:
+            <!-- Image Preview -->
+            <img id="preview" src="#" alt=" " class="icon">
+        </label><br>
+        <input type="file" name="image" id="image" accept="image/*" required>
+        <br><br>
+        
+        <input type="submit" value="Add Badge" class="login-submit">
+    </form>
+</div>
+
+<!-- JavaScript for Image Preview -->
+<script>
+document.getElementById('image').addEventListener('change', function(event){
+    const preview = document.getElementById('preview');
+    const file = event.target.files[0];
+
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        }
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

@@ -1,6 +1,32 @@
 {% extends "partials/layout.html" %}
 {% block content %}
 <h2>{{title | replace("_", " ") }}</h2>
+
+<!-- admin controls for badges -->
+{% if session['admin'] and title == 'Badges' %}
+    <hr>
+    <h2>Admin panel</h2>
+    <div class="row">
+        <a href="{{ url_for('add_badge') }}">
+            <img src="/static/images/game/badges/beta.png" class="icon">
+        </a>
+        <div>
+            <h3>Add item</h3>
+            <h5>Add an item to {{title | replace("_", " ") | lower }} table. This is currently an experimental function</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <a href="{{ url_for('remove_badge') }}">
+            <img src="/static/images/game/badges/pre_alpha.png" class="icon">
+        </a>
+        <div>
+            <h3>Remove item</h3>
+            <h5>Remove an item from {{title | replace("_", " ") | lower }} table. This is currently an experimental function</h5>
+        </div>
+    </div>
+{% endif %}
+
 <h4>
     {{description[0]}}
 </h4>
@@ -15,12 +41,15 @@
     {% endif %}
 {% endfor %}
 
+<!-- if category has items, display all relevant items -->
 {% if ns.has_items %}
     {% for category, items in grouped_items.items() %}
         {% if items %}
+            <!-- print category title -->
             {% if category != "generic" %}
                 <h2>{{ category if category.endswith('s') else category ~ 's' }}</h2>
             {% endif %}
+            <!-- run through all items in category -->
             {% for item in items %}
                 <div class="row">
                     <a href="{{ url_for(tags[2], id=item[0]) }}">

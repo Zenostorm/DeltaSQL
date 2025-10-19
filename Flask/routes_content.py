@@ -33,6 +33,6 @@ resource_configs = {
     "consumables": ("items", "consumables", "consumable"),
     "junk": ("items", "junk", "junk"),
     "keys": ("items", "keys", "key"),
-    "badges": ("game", "badges", "key")
+    "badges": ("game", "badges", "badge")
     # extend dictionary when new resource is added
 }

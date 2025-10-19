@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, abort, session
 from math import ceil, floor
 import sqlite3
 import routes_content
+import os
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 DATABASE = "delta.db"
@@ -27,6 +29,7 @@ def searchbar_length_handler(search):
 def allowed_file(filename):  # check form for correct filetype
     return '.' in filename and filename.rsplit('.', 1)[1].lower() \
         in routes_content.ALLOWED_EXTENSIONS
+
 
 # GENERAL ROUTES
 @app.route("/")  # home route
@@ -81,7 +84,6 @@ def loginregister():
         if username == user[1]:
             success = True
             userid = user[0]
-            print(userid)
             break
     if success:
         success = False
@@ -183,7 +185,7 @@ def item_category_list(resource):
         categories = cur.fetchall()
         categories = [", ".join(map(str, category)) for category in categories]
     else:
-        categories = ["generic"]  # if there's no "types", set a dummy category
+        categories = ["generic"]  # if there's no "types", set a generic category
 
     # iterate through each category
     # fetch information from tables
@@ -416,7 +418,6 @@ def part(id):
                 "WHERE id IN (SELECT weapon_id FROM weapon_parts "
                 "WHERE part_id = ?)", (id,))
     weapons = cur.fetchall()
-    print(weapons)
     conn.close()
 
     return render_template('detail/part.html',
@@ -725,6 +726,123 @@ def key(id):
     return render_template('detail/key.html',
                            key=results,
                            title=results[1])
+
+
+@app.route("/badge/<int:id>")  # route for badges
+def badge(id):
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM badges WHERE id = ?", (id,))
+    results = cur.fetchone()
+
+    index_range_handler(results)  # check for list index out of range error
+
+    conn.close()
+    return render_template('detail/badge.html',
+                           badge=results,
+                           title=results[1])
+
+
+# ADMIN
+@app.route("/add_badge", methods=["GET", "POST"])  # add a new badge
+def add_badge():
+    if not session['admin']:  # check if user is an admin
+        return app.redirect('/')
+
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    # Fetch next available ID
+    cur.execute("SELECT MAX(id) FROM badges")
+    last_id = cur.fetchone()[0]
+    badge_id = (last_id or 0) + 1
+
+    if request.method == "POST":
+        # get form information
+        name = request.form.get("name")
+        type = request.form.get("type")
+        requirement = request.form.get("requirement")
+        description = (request.form.get("description") or "").replace("\n", " ")
+
+        # request image
+        image_file = request.files.get("image")
+        image_path = None
+
+        if image_file and allowed_file(image_file.filename):
+            os.makedirs('Flask/static/images/game/badges', exist_ok=True)
+            filename = secure_filename(image_file.filename)
+            # Save the file to disk
+            image_file.save(os.path.join('Flask/static/images/game/badges', filename))
+            # Save only the filename to DB
+            image_path = filename
+
+        # insert new badge
+        cur.execute(
+            "INSERT INTO badges "
+            "(id, "
+            "name, "
+            "type, "
+            "requirement, "
+            "description, "
+            "image) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (badge_id,
+             name,
+             type,
+             requirement,
+             description,
+             image_path)
+        )
+        conn.commit()
+        badge_id = cur.lastrowid    # fetch the newly created ID
+
+        conn.close()
+        return app.redirect("/items/badges")
+
+    return render_template("admin/add_badge.html",
+                           badge_id=badge_id,
+                           title="Add Badge")
+
+
+@app.route("/remove_badge", methods=["GET", "POST"])  # remove a badge
+def remove_badge():
+    if not session.get('admin'):  # check if user is an admin
+        return app.redirect('/')
+
+    conn = sqlite3.connect('delta.db')
+    cur = conn.cursor()
+
+    if request.method == "POST":
+        badge_id = request.form.get("badge_id")  # get badge ID from form
+        if badge_id:
+            badge_id = int(badge_id)
+
+            # get image filename for deletion
+            cur.execute("SELECT image FROM badges WHERE id = ?", (badge_id,))
+            row = cur.fetchone()
+            if row:  # check if there is an image, and delete it
+                image_filename = row[0]
+                if image_filename:
+                    image_path = os.path.join('static/images/game/badges', image_filename)
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+
+                # delete badge from database
+                cur.execute("DELETE FROM badges WHERE id = ?", (badge_id,))
+                conn.commit()
+
+        return app.redirect("/items/badges")
+
+    # fetch all badges to display
+    cur.execute("SELECT id, name, image FROM badges ORDER BY id")
+    badges = cur.fetchall()
+    print(badges)
+    conn.close()
+
+    return render_template("admin/remove_badge.html",
+                           badges=badges,
+                           title="Remove Badge")
+
 
 
 # ERROR ROUTES

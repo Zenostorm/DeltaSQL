@@ -213,6 +213,7 @@ input {
     margin: 0 0 0 3vw;
     font-family: 'raleway';
     font-weight: bold;
+    background-color: white;
 }
 
 textarea {
@@ -226,37 +227,11 @@ textarea {
     max-width: 60vw;
 }
 
-.admin-content {
-    color: white;
-    display: flex;
-    flex-direction: row;
-    padding-top: 2vw;
-    padding-bottom: 1vw;
+.admin-delete-row {
+    margin-left: 0.5vw;
     border-radius: 2vw;
-    margin: 0 2vw 0 2vw;
-    font-family: 'raleway';
-    font-weight: bold;
-}
-
-.admin-column {
-    flex: 1;
-    display: flex;
-    font-family: 'bungee';
-    flex-direction: column;
-    padding: 2vw;
-    background-color: #3f1e5c;
-    border-radius: 2vw;
-    margin: 0 1vw 1vw 1vw;
-}
-
-input[type="checkbox"] {
-    margin-right: auto;
-    margin-left: 0;
-}
-
-.label-content {
-    font-family: 'raleway';
-    font-size: 1vw;
+    min-width: 50vw;
+    background-color: #8e909e;
 }
 
 .search {
@@ -332,8 +307,27 @@ form .login-submit {
     font-family: "raleway";
 }
 
-form button:hover {
-    background-color: black;
+.login-submit:hover {
+    color: #6865CF;
+}
+
+form .remove-submit {
+    padding: 0.5vw 1vw 0.5vw 1vw;
+    background-color: rgb(75, 32, 49);
+    color: white;
+    font-size: 1.5vw;
+    border: 0.25vw solid black;
+    border-radius: 1vw;
+    cursor: pointer;
+    transition-duration: 0.3s;
+    margin: -1vw 0 0 2vw;
+    min-width: 20vw;
+    padding: 1vw 0 1vw 0;
+    font-family: "bungee";
+}
+
+.remove-submit:hover {
+    color: #6865CF;
 }
 
 /**IMAGE STYLES**/
@@ -421,6 +415,7 @@ h4 a:hover {
 }
 
 h5 {
+    display: block;
     color: black;
     font-size: 1.5vw;
     margin: -2vw 5vw 0 2vw;
@@ -473,6 +468,7 @@ h8 {
     flex: 1 1 auto;
     background-color: #b4b5be;
     border-radius: 2vw;
+    max-height: 12vw;
 }
 
 .topic {

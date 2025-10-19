@@ -1,0 +1,19 @@
+{% extends "partials/layout.html" %}
+{% block content %}
+<div class="topic">
+    <div>
+        <h3>{{badge[1]}}</h3>
+        <h5>{{badge[4]}}
+            <br><br>
+            {{badge[3]}}
+        </h5>
+    </div>
+
+
+        <div class="topic-box">
+            <img src="/static/images/game/badges/{{badge[5]}}" class="topic-icon">
+            <h6 class="topic-row">Type <br> <span class="lighter">{{badge[2]}}</span></h6>
+        </div>
+</div>
+
+{% endblock %}
