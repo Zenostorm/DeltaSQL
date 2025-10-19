@@ -32,6 +32,7 @@ resource_configs = {
     "wearables": ("gear", "wearables", "wearable"),
     "consumables": ("items", "consumables", "consumable"),
     "junk": ("items", "junk", "junk"),
-    "keys": ("items", "keys", "key")
+    "keys": ("items", "keys", "key"),
+    "badges": ("game", "badges", "key")
     # extend dictionary when new resource is added
 }

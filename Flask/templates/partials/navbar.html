@@ -1,6 +1,6 @@
 <nav>
     <ul>
-        <!-- bhme button-->
+        <!-- home button-->
         <li><a href="{{ url_for('home') }}">Home</a></li>
 
         <!--ballistics dropdown-->
@@ -45,5 +45,8 @@
                 <li><a href="{{ url_for('item_category_list', resource='keys') }}">Keys</a></li>
             </div>
         </div>
+
+        <!-- badges -->
+        <li><a href="{{ url_for('item_category_list', resource='badges') }}">Badges</a></li>
     </ul>
 </nav>
