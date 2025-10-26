@@ -5,7 +5,7 @@ search_max_length = 100
 user_max_length = 30
 pass_max_length = 100
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # MESSAGES
 # >Login
@@ -15,7 +15,7 @@ pass_too_long = "Password too long"
 login_success = "Login successful"
 # >Admin panel
 no_image = "Please upload an image"
-invalid_image = "Only png, jpg, and jpeg are supported"
+invalid_image = "Supported filetypes: png, jpg, jpeg, gif"
 
 # RESOURCE CONFIGS
 # tags should include:
