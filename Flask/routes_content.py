@@ -7,12 +7,15 @@ pass_max_length = 100
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# messages
+# MESSAGES
+# >Login
 login_failure = "Incorrect username or password"
 user_too_long = "Username too long"
 pass_too_long = "Password too long"
-
-login_success = "Welcome back administrator, your progress will be recorded"
+login_success = "Login successful"
+# >Admin panel
+no_image = "Please upload an image"
+invalid_image = "Only png, jpg, and jpeg are supported"
 
 # RESOURCE CONFIGS
 # tags should include:

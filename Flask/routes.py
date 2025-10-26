@@ -42,14 +42,14 @@ def home():
 @app.route("/login")  # page for the admin login
 def login():
     # get login message then clear it
-    current_login_message = session.pop("login_message", "")
+    current_message = session.pop("message", "")
 
     # if user is already logged in, return to home page
     if session.get("admin"):
         return app.redirect("/")
 
     return render_template("login.html",
-                           login_message=current_login_message,
+                           message=current_message,
                            admin=session.get("admin", False),
                            user_max_length=routes_content.user_max_length,
                            pass_max_length=routes_content.pass_max_length,
@@ -67,15 +67,15 @@ def loginregister():
     password = request.form.get("password")  # request password
 
     if not username or not password:  # check if user inputted anything
-        session["login_message"] = routes_content.login_failure
+        session["message"] = routes_content.login_failure
         return app.redirect("/login")
 
     if len(username) > routes_content.user_max_length:
-        session["login_message"] = routes_content.user_too_long
+        session["message"] = routes_content.user_too_long
         return app.redirect("/login")
 
     if len(password) > routes_content.pass_max_length:
-        session["login_message"] = routes_content.pass_too_long
+        session["message"] = routes_content.pass_too_long
         return app.redirect("/login")
 
     cur.execute("SELECT id, username FROM users")
@@ -94,12 +94,12 @@ def loginregister():
         # compare hashes to confirm/deny login
         if check_password_hash(stored_hash[0], password):
             session["admin"] = True
-            session["login_message"] = routes_content.login_success
+            session["message"] = routes_content.login_success
             success = True
 
     if not success:
         session["admin"] = False  # ensure admin session is false
-        session["login_message"] = routes_content.login_failure
+        session["message"] = routes_content.login_failure
     return app.redirect("/login")
 
 
@@ -749,6 +749,9 @@ def add_badge():
     if not session['admin']:  # check if user is an admin
         return app.redirect('/')
 
+    # get error message then clear it
+    current_message = session.pop("message", "")
+
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
 
@@ -768,13 +771,25 @@ def add_badge():
         image_file = request.files.get("image")
         image_path = None
 
-        if image_file and allowed_file(image_file.filename):
-            os.makedirs('Flask/static/images/game/badges', exist_ok=True)
-            filename = secure_filename(image_file.filename)
-            # Save the file to disk
-            image_file.save(os.path.join('Flask/static/images/game/badges', filename))
-            # Save only the filename to DB
-            image_path = filename
+        # if no image was uploaded, stop user from adding item
+        if not image_file:
+            conn.close()
+            session["message"] = routes_content.no_image
+            return app.redirect("/add_badge")
+
+        # if unsupported filetype was uploaded, stop user from adding item
+        if not allowed_file(image_file.filename):
+            conn.close()
+            session["message"] = routes_content.invalid_image
+            return app.redirect("/add_badge")
+
+        # save the image
+        os.makedirs('Flask/static/images/game/badges', exist_ok=True)
+        filename = secure_filename(image_file.filename)
+        # save the file to disk
+        image_file.save(os.path.join('Flask/static/images/game/badges', filename))
+        # save only the filename to DB
+        image_path = filename
 
         # insert new badge
         cur.execute(
@@ -801,6 +816,7 @@ def add_badge():
 
     return render_template("admin/add_badge.html",
                            badge_id=badge_id,
+                           message=current_message,
                            title="Add Badge")
 
 

@@ -5,6 +5,10 @@
 <hr><br>
 
 <div class="login-box">
+    {% if message %}
+        <h8>{{message}}</h8>
+        <br><br>
+    {% endif %}
     <form method="POST" enctype="multipart/form-data">
         <!-- Name -->
         <label for="name">Name:</label>
@@ -31,7 +35,7 @@
             <!-- Image Preview -->
             <img id="preview" src="#" alt=" " class="icon">
         </label><br>
-        <input type="file" name="image" id="image" accept="image/*" required>
+        <input type="file" name="image" id="image" accept="image/*" required hidden>
         <br><br>
         
         <input type="submit" value="Add Badge" class="login-submit">
