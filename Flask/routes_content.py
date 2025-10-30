@@ -16,6 +16,7 @@ login_success = "Login successful"
 # >Admin panel
 no_image = "Please upload an image"
 invalid_image = "Supported filetypes: png, jpg, jpeg, gif"
+missing_info = "Please input in all fields/boxes"
 
 # RESOURCE CONFIGS
 # tags should include:

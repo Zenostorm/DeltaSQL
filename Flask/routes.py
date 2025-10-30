@@ -764,8 +764,14 @@ def add_badge():
         # get form information
         name = request.form.get("name")
         type = request.form.get("type")
-        requirement = request.form.get("requirement")
-        description = (request.form.get("description") or "").replace("\n", " ")
+        # replace newlines with spaces for database formatting
+        requirement = request.form.get("requirement").replace("\n", " ")
+        description = request.form.get("description").replace("\n", " ")
+
+        # check if user inputted all fields
+        if not name or not type or not requirement or not description:
+            session["message"] = routes_content.missing_info
+            return app.redirect("/add_badge")
 
         # request image
         image_file = request.files.get("image")
@@ -774,7 +780,7 @@ def add_badge():
         # if no image was uploaded, stop user from adding item
         if not image_file:
             conn.close()
-            session["message"] = routes_content.no_image
+            session["message"] = routes_content.missing_info
             return app.redirect("/add_badge")
 
         # if unsupported filetype was uploaded, stop user from adding item
