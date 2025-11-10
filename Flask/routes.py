@@ -874,7 +874,6 @@ def remove_badge():
                            title="Remove Badge")
 
 
-
 # ERROR ROUTES
 @app.errorhandler(404)
 def page_not_found(error):
