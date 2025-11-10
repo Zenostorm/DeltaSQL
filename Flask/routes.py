@@ -700,6 +700,8 @@ def consumable(id):
 
 @app.route("/junk/<int:id>")  # route for junk
 def junk(id):
+    stack_value = 0
+
     conn = sqlite3.connect('delta.db')
     cur = conn.cursor()
     cur.execute("SELECT * FROM junk WHERE id = ?", (id,))
@@ -707,9 +709,15 @@ def junk(id):
 
     index_range_handler(results)  # check for list index out of range error
 
+    # check if item can be stacked (stack limit is more than 1)
+    if results[4] > 1:
+        # calculate value per stack (value * stack limit)
+        stack_value = results[3] * results[4]
+
     conn.close()
     return render_template('detail/junk.html',
                            item=results,
+                           stack_value=stack_value,
                            title=results[1])
 
 
